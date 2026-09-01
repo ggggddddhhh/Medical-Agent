@@ -6,7 +6,8 @@
   "description": "A verifiable medical safety agent MVP for disposition and care preparation.",
   "scripts": {
     "test": "node --test",
-    "test:coverage": "node --test --experimental-test-coverage"
+    "test:coverage": "node --test --experimental-test-coverage",
+    "eval:deepseek": "node scripts/run-phase-2a-deepseek-evaluation.js"
   },
   "engines": {
     "node": ">=22"

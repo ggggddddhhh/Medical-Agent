@@ -115,7 +115,15 @@ test("generated JSON schema is closed and pathway specific", () => {
   const schema = createExtractionJsonSchema(protocol);
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.pathway.const, "CHEST_PAIN_V1");
-  assert.equal(schema.properties.facts.items.additionalProperties, false);
-  assert.ok(schema.properties.facts.items.properties.path.enum.includes("redFlags.difficultyBreathing"));
-  assert.equal(schema.properties.facts.items.properties.path.enum.includes("disposition"), false);
+  const variants = schema.properties.facts.items.anyOf;
+  assert.ok(variants.length > Object.keys(protocol.semanticFactSchema).length);
+  assert.ok(variants.every((variant) => variant.additionalProperties === false));
+  assert.match(JSON.stringify(variants), /redFlags\.difficultyBreathing/);
+  assert.doesNotMatch(JSON.stringify(variants), /disposition/);
+  const dyspneaKnown = variants.find(
+    (variant) =>
+      variant.properties.path.const === "redFlags.difficultyBreathing" &&
+      variant.properties.status.const === "known",
+  );
+  assert.equal(dyspneaKnown.properties.value.type, "boolean");
 });

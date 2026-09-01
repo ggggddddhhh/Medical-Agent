@@ -23,7 +23,7 @@ test("Phase 2A documents record architecture, metrics, limitations, and promotio
   }
   for (const text of [
     "PASS_WITH_CONDITIONS",
-    "真实 LLM 指标：**N/A",
+    "DeepSeek V4 Flash 正式双轮评测",
     "最终测试：102",
     "Phase 1 Safety Invariants：10/10",
     "是否具备进入 Phase 2B 的条件：**否**",

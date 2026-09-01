@@ -44,9 +44,21 @@ export {
 } from "./semantic/extraction-schema.js";
 export {
   buildExtractionInstruction,
+  SEMANTIC_PROMPT_VERSION,
   SEMANTIC_EXTRACTOR_VERSION,
   SemanticExtractor,
 } from "./semantic/semantic-extractor.js";
 export { OpenAIResponsesProvider } from "./semantic/openai-responses-provider.js";
+export { OpenAICompatibleResponsesAdapter } from "./semantic/openai-compatible-responses-adapter.js";
+export {
+  createDeepSeekV4FlashAdapter,
+  DEEPSEEK_BASE_URL,
+  DEEPSEEK_PROVIDER,
+  DEEPSEEK_V4_FLASH_MODEL,
+} from "./semantic/deepseek-responses-adapter.js";
 export { SemanticShadowAgent } from "./semantic/shadow-mode.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
+export {
+  evaluateRealModel,
+  REAL_MODEL_DATASET_VERSION,
+} from "./evaluation/real-model-evaluator.js";

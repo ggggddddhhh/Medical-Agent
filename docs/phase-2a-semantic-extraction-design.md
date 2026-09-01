@@ -102,9 +102,13 @@ LLM provider 可以使用原生 Structured Outputs，但 provider 约束不是�
 
 ## 7. Provider 与失败隔离
 
-`SemanticExtractor` 接受可注入 provider。仓库提供零第三方依赖的 `OpenAIResponsesProvider`，模型名必须由部署者显式配置，不在安全内核中硬编码。
+`SemanticExtractor` 接受可注入 provider。仓库提供零第三方依赖的 `OpenAICompatibleResponsesAdapter`；OpenAI 兼容名称作为向后兼容 alias，DeepSeek V4 Flash 通过独立 compatibility profile 配置 endpoint、参数差异和 non-thinking baseline，不复制上层架构。
+
+当前 Phase 2A 主评测模型固定为 `DeepSeek / deepseek-v4-flash`，API Key 只从 `DEEPSEEK_API_KEY` 读取。`.env` 文件被 Git 忽略，`.env.example` 只保留空值占位。
 
 以下情况统一 fail closed，并只记录状态和错误码：timeout、provider error、rate limit、empty/null response、invalid JSON、truncated output、Schema violation 和 forbidden fields。失败不会阻止 Phase 1 Core 继续工作。
+
+DeepSeek baseline 使用 Responses API `reasoning.effort = none` 与 `temperature = 0`，且请求不包含 `tools` 或 `tool_choice`。Thinking 与 non-thinking 若需比较，必须使用不同实验版本和独立报告。
 
 ## 8. Audit 与数据分离
 

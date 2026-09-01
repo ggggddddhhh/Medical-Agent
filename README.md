@@ -63,5 +63,8 @@ console.log(second.disposition); // EMERGENCY_NOW
 
 - [Phase 2A Semantic Extraction Design](docs/phase-2a-semantic-extraction-design.md)
 - [Phase 2A Evaluation Report](docs/phase-2a-evaluation-report.md)
+- [DeepSeek V4 Flash Real-Model Evaluation](docs/phase-2a-real-model-evaluation.md)
 
 Phase 2A 提供严格的 pathway-specific Extraction Schema、可注入的真实 LLM provider、独立 Shadow Evaluation Log、24 条 Gold Cases、8 条 Semantic Sentinels 和 10 项语义评测指标。LLM candidate 不会更新 CaseState，也不会改变 Phase 1 的 disposition、state transition 或工具调用。
+
+DeepSeek V4 Flash 的双轮离线评测结论为 **FAIL / NOT_READY**。主要问题是 Semantic Sentinel、Red Flag Recall、Uncertainty、hallucination 和 run-to-run drift；模型仍只能停留在 Shadow Mode。

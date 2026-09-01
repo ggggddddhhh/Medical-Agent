@@ -1,0 +1,2177 @@
+{
+  "evaluationVersion": "phase-2a-real-model-evaluation-1.0.0",
+  "datasetVersion": "phase-2a-semantic-dataset-1.0.0",
+  "evaluationTimestamp": "2026-09-01T11:02:23.183Z",
+  "provider": "DeepSeek",
+  "model": "deepseek-v4-flash",
+  "baseApiFormat": "Responses API",
+  "schemaVersion": "clinical-facts-1.0.0",
+  "promptVersion": "semantic-extraction-prompt-0.2.0",
+  "mode": "non-thinking",
+  "runs": 2,
+  "goldCases": 24,
+  "sentinelCases": 8,
+  "goldExecutions": 48,
+  "sentinelExecutions": 16,
+  "metrics": {
+    "schemaValidityRate": 0.96875,
+    "factPrecision": 0.31333333333333335,
+    "factRecall": 0.38524590163934425,
+    "redFlagFactRecall": 0.5,
+    "negationAccuracy": 1,
+    "unknownAccuracy": 0.9487179487179487,
+    "uncertaintyAccuracy": 0,
+    "hallucinatedFactRate": 0.17293233082706766,
+    "conflictDetectionAccuracy": 1,
+    "semanticSentinelPassRate": 0,
+    "totals": {
+      "cases": 64,
+      "schemaValid": 62,
+      "expectedFacts": 122,
+      "predictedFacts": 150,
+      "predictedKnownFacts": 133,
+      "matchedFacts": 47,
+      "redFlags": 32,
+      "matchedRedFlags": 16,
+      "negations": 10,
+      "matchedNegations": 10,
+      "unknowns": 78,
+      "matchedUnknowns": 74,
+      "uncertainties": 6,
+      "matchedUncertainties": 0,
+      "conflicts": 8,
+      "matchedConflicts": 8,
+      "hallucinated": 23,
+      "sentinels": 16,
+      "passedSentinels": 0
+    }
+  },
+  "passedSentinelCases": 0,
+  "criticalSemanticMisses": [
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-01",
+      "run": 1,
+      "path": "symptoms.suddenOnset",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-01",
+      "run": 1,
+      "path": "symptoms.rapidPeak",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-02",
+      "run": 1,
+      "path": "redFlags.neurologicalDeficit",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-03",
+      "run": 1,
+      "path": "redFlags.alteredConsciousness",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "C-SENT-03",
+      "run": 1,
+      "path": "redFlags.collapseOrSweating",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-01",
+      "run": 2,
+      "path": "symptoms.suddenOnset",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-01",
+      "run": 2,
+      "path": "symptoms.rapidPeak",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-02",
+      "run": 2,
+      "path": "redFlags.neurologicalDeficit",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "H-SENT-03",
+      "run": 2,
+      "path": "redFlags.alteredConsciousness",
+      "failureType": "incorrect_value_or_status"
+    },
+    {
+      "code": "CRITICAL_SEMANTIC_MISS",
+      "caseId": "C-SENT-03",
+      "run": 2,
+      "path": "redFlags.collapseOrSweating",
+      "failureType": "incorrect_value_or_status"
+    }
+  ],
+  "hallucinationCount": 23,
+  "schemaFailureCount": 2,
+  "providerFailureCount": 0,
+  "runToRunDrift": true,
+  "driftCases": [
+    "H-GOLD-06",
+    "H-GOLD-10",
+    "C-GOLD-06",
+    "C-GOLD-07",
+    "H-SENT-01"
+  ],
+  "modelSnapshots": [
+    "deepseek-v4-flash"
+  ],
+  "clinicalStatus": "Clinical validation pending",
+  "verdict": "FAIL",
+  "phase2B": "NOT_READY",
+  "records": [
+    {
+      "caseId": "H-GOLD-01",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 120,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": 5,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-02",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": 7,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-03",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-04",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.neurologicalDeficit",
+          "value": false,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-05",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.neurologicalDeficit",
+          "value": true,
+          "status": "known",
+          "confidence": 0.6,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-06",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "sudden_severe",
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "new_onset",
+          "contradictionCandidate": true
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": true,
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "new_onset",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.rapidPeak",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "new_onset",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-07",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": [
+            "gradual",
+            "sudden_severe"
+          ],
+          "status": "conflicting",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": true
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-08",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "gradual",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.rapidPeak",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": 10,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-09",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-10",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "symptoms.onsetPattern",
+          "value": null,
+          "status": "refused",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-11",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "symptoms.suddenOnset",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.6,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-12",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 120,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-01",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 5,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-02",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": true,
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-03",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-04",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-05",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "invalid",
+      "errorCode": "EXTRACTION_SCHEMA_VIOLATION",
+      "modelSnapshot": null,
+      "candidateFacts": [],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-06",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "resolved",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-07",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "gradual",
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "chronic",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": null,
+          "status": "unknown",
+          "confidence": 0.9,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "relevantHistory.priorSimilarEpisode",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-08",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": true,
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": true
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-09",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": true,
+          "status": "known",
+          "confidence": 0.6,
+          "temporality": "current",
+          "contradictionCandidate": true
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-10",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-11",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.6,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-12",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 120,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-SENT-01",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "sudden_severe",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.rapidPeak",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-SENT-02",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.neurologicalDeficit",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-SENT-03",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.alteredConsciousness",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-SENT-04",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.feverNeckStiffness",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-01",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.persistentSevere",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-02",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-03",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-04",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.persistentSevere",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.painRadiation",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-GOLD-01",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 120,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": 5,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-02",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": 7,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-03",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-04",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.neurologicalDeficit",
+          "value": false,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-05",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.neurologicalDeficit",
+          "value": true,
+          "status": "known",
+          "confidence": 0.6,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-06",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "sudden_severe",
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": true
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": true,
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.rapidPeak",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-07",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": [
+            "gradual",
+            "sudden_severe"
+          ],
+          "status": "conflicting",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": true
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-08",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "gradual",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.rapidPeak",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": 10,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-09",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-10",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": null,
+          "status": "refused",
+          "confidence": 0.9,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-11",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "symptoms.suddenOnset",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.6,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-GOLD-12",
+      "datasetKind": "gold",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 120,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-01",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 5,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-02",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": true,
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-03",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-04",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-05",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "invalid",
+      "errorCode": "EXTRACTION_SCHEMA_VIOLATION",
+      "modelSnapshot": null,
+      "candidateFacts": [],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-06",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-07",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "gradual",
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "chronic",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.severity",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.persistentSevere",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.painRadiation",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "relevantHistory.cardiovascularDisease",
+          "value": null,
+          "status": "unknown",
+          "confidence": 1,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "relevantHistory.priorSimilarEpisode",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-08",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": true,
+          "status": "known",
+          "confidence": 0.95,
+          "temporality": "current",
+          "contradictionCandidate": true
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-09",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": true,
+          "status": "known",
+          "confidence": 0.6,
+          "temporality": "current",
+          "contradictionCandidate": true
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-10",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": false,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-11",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.6,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "C-GOLD-12",
+      "datasetKind": "gold",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.durationMinutes",
+          "value": 120,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": true
+    },
+    {
+      "caseId": "H-SENT-01",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.onsetPattern",
+          "value": "sudden_severe",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.suddenOnset",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.rapidPeak",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-SENT-02",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.neurologicalDeficit",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-SENT-03",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.alteredConsciousness",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "H-SENT-04",
+      "datasetKind": "sentinel",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.feverNeckStiffness",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-01",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.activeNow",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.persistentSevere",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-02",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-03",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.collapseOrSweating",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    },
+    {
+      "caseId": "C-SENT-04",
+      "datasetKind": "sentinel",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "symptoms.persistentSevere",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.painRadiation",
+          "value": true,
+          "status": "known",
+          "confidence": 1,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "sentinelPassed": false
+    }
+  ]
+}

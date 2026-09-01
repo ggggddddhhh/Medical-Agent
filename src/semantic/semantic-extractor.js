@@ -6,6 +6,7 @@ import {
 } from "./extraction-schema.js";
 
 export const SEMANTIC_EXTRACTOR_VERSION = "semantic-shadow-0.1.0";
+export const SEMANTIC_PROMPT_VERSION = "semantic-extraction-prompt-0.2.0";
 
 export class SemanticExtractor {
   #provider;
@@ -27,11 +28,13 @@ export class SemanticExtractor {
       semanticExtractorVersion: SEMANTIC_EXTRACTOR_VERSION,
       modelProvider: this.#provider.name ?? "unknown",
       modelName: this.#provider.model ?? "unknown",
+      baseApiFormat: this.#provider.baseApiFormat ?? "unknown",
       schemaVersion: SEMANTIC_SCHEMA_VERSION,
+      promptVersion: SEMANTIC_PROMPT_VERSION,
     };
   }
 
-  async run({ message, protocol }) {
+  async run({ message, protocol, contextFacts = [] }) {
     const metadata = this.metadata;
     try {
       const output = await withTimeout(
@@ -39,18 +42,26 @@ export class SemanticExtractor {
           this.#provider.generate({
             message,
             pathway: protocol.code,
-            systemInstruction: buildExtractionInstruction(protocol),
+            systemInstruction: buildExtractionInstruction(protocol, contextFacts),
             jsonSchema: createExtractionJsonSchema(protocol),
             signal,
           }),
         this.#timeoutMs,
       );
-      if (output === null || output === undefined || output === "") {
+      const providerOutput = normalizeProviderOutput(output);
+      if (
+        providerOutput.outputText === null ||
+        providerOutput.outputText === undefined ||
+        providerOutput.outputText === ""
+      ) {
         return failure(metadata, "empty_response", "not_run", "EMPTY_RESPONSE");
       }
       let candidate;
       try {
-        candidate = typeof output === "string" ? JSON.parse(output) : output;
+        candidate =
+          typeof providerOutput.outputText === "string"
+            ? JSON.parse(providerOutput.outputText)
+            : providerOutput.outputText;
       } catch {
         return failure(metadata, "malformed_response", "invalid", "INVALID_JSON");
       }
@@ -61,6 +72,7 @@ export class SemanticExtractor {
           extractionStatus: "completed",
           validationStatus: "valid",
           candidate: validated,
+          providerResponseMetadata: providerOutput.metadata,
         };
       } catch (error) {
         if (error instanceof ExtractionSchemaError) {
@@ -79,9 +91,9 @@ export class SemanticExtractor {
     }
   }
 }
-export function buildExtractionInstruction(protocol) {
+export function buildExtractionInstruction(protocol, contextFacts = []) {
   const allowedPaths = Object.keys(protocol.semanticFactSchema).join(", ");
-  return [
+  const instructions = [
     "You are a clinical fact extraction component, not a clinical decision maker.",
     `Extract only facts explicitly supported by the user text for ${protocol.code}.`,
     `Allowed fact paths: ${allowedPaths}.`,
@@ -89,7 +101,23 @@ export function buildExtractionInstruction(protocol) {
     "Use known false only for explicit negation; use uncertain for hedged claims.",
     "Preserve temporality and mark correction or disagreement as a contradiction candidate.",
     "Never output diagnosis, differential diagnosis, disposition, actions, escalation, treatment, medication, dose, tool calls, policy instructions, or prose.",
-  ].join("\n");
+  ];
+  if (contextFacts.length > 0) {
+    instructions.push(
+      `Previously extracted structured facts for conflict comparison: ${JSON.stringify(contextFacts)}`,
+    );
+  }
+  return instructions.join("\n");
+}
+
+function normalizeProviderOutput(output) {
+  if (output?.type === "semantic_provider_response") {
+    return {
+      outputText: output.outputText,
+      metadata: structuredClone(output.metadata ?? {}),
+    };
+  }
+  return { outputText: output, metadata: {} };
 }
 
 function failure(metadata, extractionStatus, validationStatus, errorCode) {

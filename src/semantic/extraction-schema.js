@@ -49,44 +49,58 @@ export function createExtractionJsonSchema(protocol) {
         type: "array",
         maxItems: Object.keys(protocol.semanticFactSchema).length,
         items: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            path: {
-              type: "string",
-              enum: Object.keys(protocol.semanticFactSchema),
-            },
-            value: {
-              anyOf: [
-                { type: "boolean" },
-                { type: "number" },
-                { type: "string" },
-                {
-                  type: "array",
-                  minItems: 2,
-                  uniqueItems: true,
-                  items: {
-                    anyOf: [
-                      { type: "boolean" },
-                      { type: "number" },
-                      { type: "string" },
-                    ],
-                  },
-                },
-                { type: "null" },
-              ],
-            },
-            status: { type: "string", enum: STATUS_VALUES },
-            confidence: { type: "number", minimum: 0, maximum: 1 },
-            temporality: { type: "string", enum: TEMPORALITY_VALUES },
-            contradictionCandidate: { type: "boolean" },
-          },
-          required: FACT_KEYS,
+          anyOf: Object.entries(protocol.semanticFactSchema).flatMap(
+            ([path, definition]) => createFactSchemaVariants(path, definition),
+          ),
         },
       },
     },
     required: TOP_LEVEL_KEYS,
   };
+}
+
+function createFactSchemaVariants(path, definition) {
+  const knownValueSchema = definitionToJsonSchema(definition);
+  return [
+    factObjectSchema(path, { const: "known" }, knownValueSchema),
+    factObjectSchema(
+      path,
+      { enum: ["unknown", "refused", "uncertain"] },
+      { type: "null" },
+    ),
+    factObjectSchema(path, { const: "conflicting" }, {
+      type: "array",
+      minItems: 2,
+      uniqueItems: true,
+      items: knownValueSchema,
+    }),
+  ];
+}
+
+function factObjectSchema(path, statusSchema, valueSchema) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      path: { type: "string", const: path },
+      value: valueSchema,
+      status: { type: "string", ...statusSchema },
+      confidence: { type: "number", minimum: 0, maximum: 1 },
+      temporality: { type: "string", enum: TEMPORALITY_VALUES },
+      contradictionCandidate: { type: "boolean" },
+    },
+    required: FACT_KEYS,
+  };
+}
+
+function definitionToJsonSchema(definition) {
+  if (definition.type === "enum") {
+    return { type: "string", enum: [...definition.values] };
+  }
+  const schema = { type: definition.type };
+  if (definition.minimum !== undefined) schema.minimum = definition.minimum;
+  if (definition.maximum !== undefined) schema.maximum = definition.maximum;
+  return schema;
 }
 
 export function validateExtractionEnvelope(candidate, protocol) {

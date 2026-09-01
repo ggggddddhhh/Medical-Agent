@@ -60,7 +60,7 @@ Phase 2A 工程基础可以用于受控的真实模型离线/Shadow 评测，但
 
 Harness oracle replay 结果：Schema Validity、Fact Precision/Recall、Red Flag Recall、Negation、Unknown、Uncertainty、Conflict 与 Sentinel 均为 100%，Hallucinated Fact Rate 为 0%。这是测试夹具自洽性结果。
 
-真实 LLM 指标：**N/A（尚未运行）**。不得用 oracle replay 代替 promotion evidence。
+本工程报告生成时真实 LLM 指标为 N/A。后续已完成 DeepSeek V4 Flash 正式双轮评测，结果为 **FAIL / NOT_READY**；真实指标和错误明细见 `docs/phase-2a-real-model-evaluation.md`。不得用本节 oracle replay 代替 real-model evidence。
 
 ## 6. Failure-mode Validation
 
