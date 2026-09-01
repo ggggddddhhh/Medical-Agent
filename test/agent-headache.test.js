@@ -28,7 +28,7 @@ test("headache pathway asks only the next highest-priority missing question", ()
 
   assert.equal(response.action, AgentAction.ASK_MORE);
   assert.equal(response.question.id, "HEADACHE_ONSET");
-  assert.equal(agent.getState(sessionId).askedQuestionIds, undefined);
+  assert.deepEqual(agent.getState(sessionId).askedQuestionIds, ["HEADACHE_ONSET"]);
   assert.match(response.notice, /人工智能/);
 });
 
@@ -83,6 +83,10 @@ test("mild headache with all protocol red flags denied reaches self-monitor", ()
   );
   assert.equal(
     agent.handleMessage(sessionId, "没有").question.id,
+    "HEADACHE_CONSCIOUSNESS",
+  );
+  assert.equal(
+    agent.handleMessage(sessionId, "没有").question.id,
     "HEADACHE_TRAUMA",
   );
   assert.equal(
@@ -102,6 +106,7 @@ test("high-severity headache reaches same-day care and department tool", () => {
 
   agent.handleMessage(sessionId, "我头痛");
   agent.handleMessage(sessionId, "逐渐出现");
+  agent.handleMessage(sessionId, "没有");
   agent.handleMessage(sessionId, "没有");
   agent.handleMessage(sessionId, "没有");
   agent.handleMessage(sessionId, "没有");

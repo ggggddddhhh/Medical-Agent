@@ -33,7 +33,7 @@ test("personalized medication dosage stays outside the MVP boundary", () => {
 
   assert.equal(response.action, AgentAction.OUT_OF_SCOPE);
   assert.ok(response.reasonCodes.includes("MEDICATION_BOUNDARY"));
-  assert.match(response.message, /不提供个性化用药剂量/);
+  assert.match(response.message, /不提供个性化用药.*剂量/);
 });
 
 test("self-harm text is handled as safety infrastructure", () => {
@@ -140,22 +140,23 @@ test("decision trace is structured, versioned, and excludes raw user text", () =
   const trace = agent.getAudit(sessionId)[0];
 
   assert.equal(trace.traceId, response.decisionTraceId);
-  assert.equal(trace.supportedPathway, "HEADACHE_V1@1.0.0");
-  assert.equal(trace.policyVersion, "triage-policy-0.1.0");
+  assert.equal(trace.supportedPathway, "HEADACHE_V1@1.1.0");
+  assert.equal(trace.policyVersion, "triage-policy-0.2.0");
   assert.equal(trace.modelVersion, "deterministic-baseline-0.1.0");
   assert.ok(trace.actions.includes(AgentAction.CALL_TOOL));
   assert.ok(trace.actions.includes(AgentAction.ASK_MORE));
   assert.doesNotMatch(JSON.stringify(trace), new RegExp(rawMessage));
 });
 
-test("a completed disposition session cannot be silently reused", () => {
+test("an emergency terminal state is reaffirmed and cannot be downgraded", () => {
   const agent = new MedicalSafetyAgent();
   const sessionId = agent.startSession({ adultConfirmed: true });
 
   agent.handleMessage(sessionId, "突然一下剧烈头痛，是最严重的一次");
   const response = agent.handleMessage(sessionId, "现在好一点了");
 
-  assert.equal(response.action, AgentAction.OUT_OF_SCOPE);
-  assert.ok(response.reasonCodes.includes("SESSION_ALREADY_CLOSED"));
-  assert.match(response.message, /创建新会话/);
+  assert.equal(response.action, AgentAction.SAFETY_ESCALATION);
+  assert.equal(response.disposition, Disposition.EMERGENCY_NOW);
+  assert.ok(response.reasonCodes.includes("TERMINAL_EMERGENCY_REAFFIRMED"));
+  assert.match(response.message, /不能.*降级|撤销急救建议/);
 });

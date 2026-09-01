@@ -20,5 +20,13 @@ export const ChiefComplaint = Object.freeze({
   CHEST_PAIN: "chest_pain",
 });
 
-export const POLICY_VERSION = "triage-policy-0.1.0";
+export const FactStatus = Object.freeze({
+  UNKNOWN: "unknown",
+  KNOWN: "known",
+  CONFLICTING: "conflicting",
+  REFUSED: "refused",
+});
+
+export const CASE_STATE_SCHEMA_VERSION = 1;
+export const POLICY_VERSION = "triage-policy-0.2.0";
 export const BASELINE_MODEL_VERSION = "deterministic-baseline-0.1.0";

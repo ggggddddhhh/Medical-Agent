@@ -1,7 +1,7 @@
 export const headacheProtocol = Object.freeze({
   code: "HEADACHE_V1",
   chiefComplaint: "headache",
-  version: "1.0.0",
+  version: "1.1.0",
   displayName: "头痛",
   aliases: ["头痛", "头疼", "脑袋疼", "headache"],
   questions: [
@@ -22,6 +22,12 @@ export const headacheProtocol = Object.freeze({
       factPath: "redFlags.feverNeckStiffness",
       parser: "boolean",
       text: "有没有发热并伴随脖子僵硬、难以低头？",
+    },
+    {
+      id: "HEADACHE_CONSCIOUSNESS",
+      factPath: "redFlags.alteredConsciousness",
+      parser: "boolean",
+      text: "有没有意识模糊、失去意识、昏倒或难以叫醒的情况？",
     },
     {
       id: "HEADACHE_TRAUMA",
@@ -46,8 +52,16 @@ export const headacheProtocol = Object.freeze({
       when: (state) => state.redFlags.neurologicalDeficit === true,
     },
     {
+      id: "HEADACHE_WORST_EVER",
+      when: (state) => state.redFlags.worstEverHeadache === true,
+    },
+    {
       id: "HEADACHE_FEVER_NECK_STIFFNESS",
       when: (state) => state.redFlags.feverNeckStiffness === true,
+    },
+    {
+      id: "HEADACHE_ALTERED_CONSCIOUSNESS",
+      when: (state) => state.redFlags.alteredConsciousness === true,
     },
     {
       id: "HEADACHE_AFTER_HEAD_TRAUMA",

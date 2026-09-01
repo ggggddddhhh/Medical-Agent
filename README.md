@@ -51,3 +51,10 @@ console.log(second.disposition); // EMERGENCY_NOW
 - `INSUFFICIENT_INFO`
 
 协议、规则、模型和工具版本都会写入审计轨迹。新增症状路径时，必须同时增加对应的正常路径、危险信号、语义改写、越界和工具失败测试。
+
+## Phase 1 验证
+
+- [Safety Invariants](docs/safety-invariants.md)
+- [Phase 1 Core Validation Report](docs/phase-1-validation-report.md)
+
+当前验证结论为 **PASS_WITH_CONDITIONS**：可以有条件进入 LLM 结构化语义抽取集成，但不能据此开始临床部署、扩展症状范围或宣称已经验证自然语言理解能力。

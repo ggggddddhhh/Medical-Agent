@@ -5,6 +5,9 @@ export class ToolRegistry {
     if (!tool?.name || typeof tool.execute !== "function") {
       throw new TypeError("A tool must have a name and execute function.");
     }
+    if (tool.readOnly !== true) {
+      throw new TypeError(`Tool must explicitly declare readOnly: ${tool.name}`);
+    }
     if (this.#tools.has(tool.name)) {
       throw new Error(`Tool already registered: ${tool.name}`);
     }

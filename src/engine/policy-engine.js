@@ -3,7 +3,12 @@ import {
   ChiefComplaint,
   Disposition,
   POLICY_VERSION,
+  FactStatus,
 } from "../domain/constants.js";
+import {
+  getFactStatus,
+  isFactResolved,
+} from "../domain/case-state.js";
 
 const CONFIRM_ADULT_QUESTION = Object.freeze({
   id: "CONFIRM_ADULT",
@@ -35,28 +40,57 @@ export function decideNextAction(state, protocol) {
     };
   }
 
+  if (state.patientContext.pregnant === true) {
+    return {
+      action: AgentAction.OUT_OF_SCOPE,
+      disposition: null,
+      reasonCodes: ["PREGNANCY_OUT_OF_SCOPE"],
+      policyVersion: POLICY_VERSION,
+    };
+  }
+
   if (state.patientContext.adultConfirmed !== true) {
+    if (isFactResolved(state, "patientContext.adultConfirmed")) {
+      return insufficient(["ADULT_STATUS_UNAVAILABLE"]);
+    }
     return askMore(CONFIRM_ADULT_QUESTION, ["ADULT_STATUS_REQUIRED"]);
   }
 
   const nextQuestion = protocol.questions.find(
-    (question) => readPath(state, question.factPath) === undefined,
+    (question) => !isFactResolved(state, question.factPath),
   );
 
   if (nextQuestion && state.turnCount >= 12) {
-    return {
-      action: AgentAction.INSUFFICIENT_INFO,
-      disposition: Disposition.INSUFFICIENT_INFORMATION,
-      reasonCodes: ["MAX_TURNS_WITH_REQUIRED_FACTS_MISSING"],
-      policyVersion: POLICY_VERSION,
-    };
+    return insufficient(["MAX_TURNS_WITH_REQUIRED_FACTS_MISSING"]);
   }
 
   if (nextQuestion) {
     return askMore(nextQuestion, [`MISSING_${nextQuestion.id}`]);
   }
 
+  const unavailableFacts = protocol.questions
+    .map((question) => ({
+      id: question.id,
+      status: getFactStatus(state, question.factPath),
+    }))
+    .filter(({ status }) => status !== FactStatus.KNOWN);
+  if (unavailableFacts.length > 0) {
+    return insufficient([
+      "REQUIRED_FACTS_UNAVAILABLE",
+      ...unavailableFacts.map(({ id, status }) => `${id}_${status.toUpperCase()}`),
+    ]);
+  }
+
   return determineDisposition(state, protocol);
+}
+
+function insufficient(reasonCodes) {
+  return {
+    action: AgentAction.INSUFFICIENT_INFO,
+    disposition: Disposition.INSUFFICIENT_INFORMATION,
+    reasonCodes,
+    policyVersion: POLICY_VERSION,
+  };
 }
 
 function determineDisposition(state, protocol) {
@@ -102,8 +136,4 @@ function askMore(question, reasonCodes) {
     question,
     policyVersion: POLICY_VERSION,
   };
-}
-
-function readPath(value, path) {
-  return path.split(".").reduce((current, key) => current?.[key], value);
 }

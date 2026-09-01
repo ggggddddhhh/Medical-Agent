@@ -8,6 +8,8 @@ import {
   createCaseState,
   mergeFacts,
   publicStateSnapshot,
+  restoreCaseState,
+  serializeCaseState,
   setDecision,
 } from "../domain/case-state.js";
 import { extractFacts } from "../extraction/fact-extractor.js";
@@ -16,12 +18,17 @@ import { scanInput, InputSafetyCode } from "../safety/input-safety.js";
 import { validateOutput } from "../safety/output-safety.js";
 import { InMemoryAuditLog } from "../audit/audit-log.js";
 import { decideNextAction } from "./policy-engine.js";
+import {
+  assertActionTransition,
+  isTerminalAction,
+} from "./state-machine.js";
 import { ToolRegistry } from "../tools/tool-registry.js";
 import {
   clinicalProtocolSearchTool,
   departmentRouterTool,
   emergencyResourceTool,
 } from "../tools/default-tools.js";
+import { validateToolResult } from "../tools/tool-result-validator.js";
 
 const SERVICE_NOTICE =
   "这是人工智能生成的分诊与就医准备信息，不是诊断或处方；如情况紧急，请立即联系当地急救服务。";
@@ -47,43 +54,77 @@ export class MedicalSafetyAgent {
     return state.sessionId;
   }
 
+  restoreSession(serializedState) {
+    const state = restoreCaseState(serializedState);
+    if (this.#sessions.has(state.sessionId)) {
+      throw new Error(`Session already exists: ${state.sessionId}`);
+    }
+    this.#sessions.set(state.sessionId, state);
+    return state.sessionId;
+  }
+
+  exportSession(sessionId) {
+    return serializeCaseState(this.#requireSession(sessionId));
+  }
+
   handleMessage(sessionId, message) {
     const state = this.#requireSession(sessionId);
     if (typeof message !== "string" || message.trim().length === 0) {
       throw new TypeError("message must be a non-empty string.");
     }
-    if (state.closed) {
-      return this.#recordAndReturn(state, {
-        action: AgentAction.OUT_OF_SCOPE,
-        disposition: null,
-        reasonCodes: ["SESSION_ALREADY_CLOSED"],
-        message: "本次评估已经结束。如需评估新的症状，请创建新会话。",
-      });
-    }
-
     state.turnCount += 1;
     const inputSafetyResult = scanInput(message);
-    if (inputSafetyResult) {
+    if (inputSafetyResult?.code === InputSafetyCode.SELF_HARM) {
       return this.#handleInputSafety(state, inputSafetyResult);
     }
 
-    if (!state.chiefComplaint.code) {
-      const detected = detectChiefComplaint(message);
-      if (!detected) {
-        return this.#recordAndReturn(state, {
-          action: AgentAction.OUT_OF_SCOPE,
-          disposition: null,
-          reasonCodes: ["UNSUPPORTED_CHIEF_COMPLAINT"],
-          message:
-            "当前版本仅支持成年人头痛和胸痛的安全评估。该问题暂不在支持范围内，建议咨询医疗专业人员。",
-        });
+    const emergencyProbe = this.#probeEmergency(state, message);
+    if (state.closed) {
+      if (
+        state.decisionState.action === AgentAction.SAFETY_ESCALATION ||
+        state.decisionState.disposition === Disposition.EMERGENCY_NOW
+      ) {
+        return this.#handleClosedSession(state);
       }
-      state.chiefComplaint.code = detected;
-      state.chiefComplaint.rawLabel = getProtocol(detected).displayName;
+      if (emergencyProbe.ruleHits.length > 0) {
+        return this.#handleEmergencyProbe(state, emergencyProbe);
+      }
+      return this.#handleClosedSession(state);
+    }
+    if (inputSafetyResult && emergencyProbe.ruleHits.length === 0) {
+      return this.#handleInputSafety(state, inputSafetyResult);
     }
 
-    const protocol = getProtocol(state.chiefComplaint.code);
-    mergeFacts(state, extractFacts(message, state, protocol));
+    let protocol;
+    if (emergencyProbe.ruleHits.length > 0) {
+      this.#applyEmergencyProbe(state, emergencyProbe);
+      protocol = emergencyProbe.protocol;
+    } else {
+      if (!state.chiefComplaint.code) {
+        const detected = detectChiefComplaint(message);
+        if (!detected) {
+          this.#transitionState(state, {
+            action: AgentAction.OUT_OF_SCOPE,
+            disposition: null,
+            reasonCodes: ["UNSUPPORTED_CHIEF_COMPLAINT"],
+          });
+          return this.#recordAndReturn(state, {
+            action: AgentAction.OUT_OF_SCOPE,
+            disposition: null,
+            reasonCodes: ["UNSUPPORTED_CHIEF_COMPLAINT"],
+            message:
+              "当前版本仅支持成年人头痛和胸痛的安全评估。该问题暂不在支持范围内，建议咨询医疗专业人员。",
+          });
+        }
+        state.chiefComplaint.code = detected;
+        state.chiefComplaint.rawLabel = getProtocol(detected).displayName;
+      }
+
+      protocol = getProtocol(state.chiefComplaint.code);
+      mergeFacts(state, extractFacts(message, state, protocol));
+    }
+
+    const emergencyRuleHits = getEmergencyRuleHits(protocol, state);
 
     const toolTraces = [];
     if (!state.decisionState.pathwayVersion) {
@@ -92,7 +133,13 @@ export class MedicalSafetyAgent {
         { chiefComplaint: state.chiefComplaint.code },
         toolTraces,
       );
-      if (!protocolResult?.found) {
+      if (!protocolResult?.found && emergencyRuleHits.length === 0) {
+        this.#transitionState(state, {
+          action: AgentAction.INSUFFICIENT_INFO,
+          disposition: Disposition.INSUFFICIENT_INFORMATION,
+          reasonCodes: ["APPROVED_PROTOCOL_UNAVAILABLE"],
+        });
+        state.closed = true;
         return this.#recordAndReturn(
           state,
           {
@@ -108,7 +155,7 @@ export class MedicalSafetyAgent {
     }
 
     const decision = decideNextAction(state, protocol);
-    setDecision(state, {
+    this.#transitionState(state, {
       action: decision.action,
       disposition: decision.disposition,
       reasonCodes: decision.reasonCodes,
@@ -122,13 +169,13 @@ export class MedicalSafetyAgent {
     ) {
       state.askedQuestionIds.push(decision.question.id);
     }
+    if (decision.question) {
+      state.questionAttempts[decision.question.id] =
+        (state.questionAttempts[decision.question.id] ?? 0) + 1;
+    }
 
     const response = this.#buildDecisionResponse(state, decision, toolTraces);
-    if (
-      decision.action === AgentAction.DISPOSITION ||
-      decision.action === AgentAction.SAFETY_ESCALATION ||
-      decision.action === AgentAction.INSUFFICIENT_INFO
-    ) {
+    if (isTerminalAction(decision.action)) {
       state.closed = true;
     }
     return this.#recordAndReturn(state, response, toolTraces);
@@ -180,12 +227,16 @@ export class MedicalSafetyAgent {
     }
 
     if (decision.action === AgentAction.OUT_OF_SCOPE) {
+      const pregnancyBoundary = decision.reasonCodes.includes(
+        "PREGNANCY_OUT_OF_SCOPE",
+      );
       return {
         action: decision.action,
         disposition: null,
         reasonCodes: decision.reasonCodes,
-        message:
-          "当前版本仅支持已满 18 周岁的成年人。未成年人请由监护人联系医疗专业人员进行评估。",
+        message: pregnancyBoundary
+          ? "当前版本不支持孕期症状评估，请联系产科、急诊科或其他医疗专业人员。"
+          : "当前版本仅支持已满 18 周岁的成年人。未成年人请由监护人联系医疗专业人员进行评估。",
       };
     }
 
@@ -221,7 +272,7 @@ export class MedicalSafetyAgent {
         { region: state.patientContext.region ?? this.#deploymentRegion },
         toolTraces,
       );
-      setDecision(state, {
+      this.#transitionState(state, {
         action: AgentAction.SAFETY_ESCALATION,
         disposition: Disposition.EMERGENCY_NOW,
         reasonCodes: [result.code],
@@ -245,13 +296,125 @@ export class MedicalSafetyAgent {
 
     const isMedicationBoundary =
       result.code === InputSafetyCode.MEDICATION_BOUNDARY;
+    const isDiagnosisBoundary =
+      result.code === InputSafetyCode.DIAGNOSIS_BOUNDARY;
+    this.#transitionState(state, {
+      action: AgentAction.OUT_OF_SCOPE,
+      disposition: null,
+      reasonCodes: [result.code],
+    });
     return this.#recordAndReturn(state, {
       action: AgentAction.OUT_OF_SCOPE,
       disposition: null,
       reasonCodes: [result.code],
       message: isMedicationBoundary
-        ? "当前版本不提供个性化用药剂量、停药或换药建议。请咨询医生或药师，并以正式药品说明书为准。"
-        : "该请求试图改变或获取系统安全规则，已被拒绝。你仍可以描述头痛或胸痛症状以进行安全评估。",
+        ? "当前版本不提供个性化用药、处方、剂量、停药或换药建议。请咨询医生或药师，并以正式药品说明书为准。"
+        : isDiagnosisBoundary
+          ? "当前版本不提供疾病诊断或确诊结论，只能评估下一步处置紧急程度。"
+          : "该请求试图改变或获取系统安全规则，已被拒绝。你仍可以描述头痛或胸痛症状以进行安全评估。",
+    });
+  }
+
+  #probeEmergency(state, message) {
+    const detectedComplaint = detectChiefComplaint(message);
+    const chiefComplaint = detectedComplaint ?? state.chiefComplaint.code;
+    if (!chiefComplaint) {
+      return { ruleHits: [] };
+    }
+
+    const protocol = getProtocol(chiefComplaint);
+    const candidate = structuredClone(state);
+    candidate.chiefComplaint.code = chiefComplaint;
+    candidate.chiefComplaint.rawLabel = protocol.displayName;
+    const facts = extractFacts(message, candidate, protocol);
+    mergeFacts(candidate, facts);
+    return {
+      chiefComplaint,
+      facts,
+      protocol,
+      ruleHits: getEmergencyRuleHits(protocol, candidate),
+    };
+  }
+
+  #applyEmergencyProbe(state, probe) {
+    state.chiefComplaint.code = probe.chiefComplaint;
+    state.chiefComplaint.rawLabel = probe.protocol.displayName;
+    mergeFacts(state, probe.facts);
+  }
+
+  #handleEmergencyProbe(state, probe) {
+    this.#applyEmergencyProbe(state, probe);
+    state.decisionState.pathwayVersion =
+      probe.protocol.code + "@" + probe.protocol.version;
+    const decision = {
+      action: AgentAction.SAFETY_ESCALATION,
+      disposition: Disposition.EMERGENCY_NOW,
+      reasonCodes: probe.ruleHits,
+    };
+    this.#transitionState(state, decision);
+    state.closed = true;
+    const toolTraces = [];
+    const response = this.#buildDecisionResponse(state, decision, toolTraces);
+    return this.#recordAndReturn(state, response, toolTraces);
+  }
+
+  #handleClosedSession(state) {
+    const previous = state.decisionState;
+    if (
+      previous.action === AgentAction.SAFETY_ESCALATION ||
+      previous.disposition === Disposition.EMERGENCY_NOW
+    ) {
+      const toolTraces = [];
+      const resource = this.#callTool(
+        "emergency_resource",
+        { region: state.patientContext.region ?? this.#deploymentRegion },
+        toolTraces,
+      );
+      this.#transitionState(state, {
+        action: AgentAction.SAFETY_ESCALATION,
+        disposition: Disposition.EMERGENCY_NOW,
+        reasonCodes: [
+          ...previous.reasonCodes,
+          "TERMINAL_EMERGENCY_REAFFIRMED",
+        ],
+      });
+      return this.#recordAndReturn(
+        state,
+        {
+          action: AgentAction.SAFETY_ESCALATION,
+          disposition: Disposition.EMERGENCY_NOW,
+          reasonCodes: state.decisionState.reasonCodes,
+          message:
+            "之前已经触发立即急救条件。即使现在感觉好转，也不能据此安全降级或撤销急救建议。",
+          guidance:
+            resource?.instructions ?? ["立即联系当地急救服务或前往最近的急诊科。"],
+          warnings: ["不要继续在线等待或自行驾车。"],
+        },
+        toolTraces,
+      );
+    }
+
+    this.#transitionState(state, {
+      action: previous.action,
+      disposition: previous.disposition,
+      reasonCodes: [...previous.reasonCodes, "TERMINAL_STATE_REPLAY"],
+    });
+    if (previous.action === AgentAction.INSUFFICIENT_INFO) {
+      return this.#recordAndReturn(state, {
+        action: AgentAction.INSUFFICIENT_INFO,
+        disposition: Disposition.INSUFFICIENT_INFORMATION,
+        reasonCodes: state.decisionState.reasonCodes,
+        message:
+          "本次评估已因信息不足结束。新信息需要在新会话中重新评估，请咨询医疗专业人员。",
+      });
+    }
+    return this.#recordAndReturn(state, {
+      action: AgentAction.DISPOSITION,
+      disposition: previous.disposition,
+      reasonCodes: state.decisionState.reasonCodes,
+      message:
+        "本次评估已经结束，后续输入不会修改原处置结果。如症状变化，请创建新会话重新评估。",
+      guidance: ["如果症状明显加重或出现新的危险信号，请立即联系医疗专业人员。"],
     });
   }
 
@@ -262,13 +425,14 @@ export class MedicalSafetyAgent {
       status: "success",
     };
     try {
-      const result = this.#tools.call(name, args);
+      const rawResult = this.#tools.call(name, args);
+      const result = validateToolResult(name, rawResult);
       trace.result = summarizeToolResult(result);
       traces.push(trace);
       return result;
     } catch (error) {
       trace.status = "failed";
-      trace.errorCode = error.name || "TOOL_ERROR";
+      trace.errorCode = error.code || error.name || "TOOL_ERROR";
       traces.push(trace);
       return null;
     }
@@ -290,7 +454,8 @@ export class MedicalSafetyAgent {
       sessionId: state.sessionId,
       supportedPathway: state.decisionState.pathwayVersion,
       state: publicStateSnapshot(state),
-      ruleHits: [...(safeResponse.reasonCodes ?? [])],
+      reasonCodes: [...(safeResponse.reasonCodes ?? [])],
+      ruleHits: deriveRuleHits(safeResponse),
       actions,
       tools: toolTraces,
       disposition: safeResponse.disposition,
@@ -301,6 +466,11 @@ export class MedicalSafetyAgent {
       ...safeResponse,
       decisionTraceId: trace.traceId,
     };
+  }
+
+  #transitionState(state, decision) {
+    assertActionTransition(state.decisionState.action, decision.action);
+    setDecision(state, decision);
   }
 
   #requireSession(sessionId) {
@@ -371,4 +541,19 @@ function createDefaultToolRegistry() {
     .register(clinicalProtocolSearchTool)
     .register(departmentRouterTool)
     .register(emergencyResourceTool);
+}
+
+function getEmergencyRuleHits(protocol, state) {
+  return protocol.emergencyRules
+    .filter((rule) => rule.when(state))
+    .map((rule) => rule.id);
+}
+
+function deriveRuleHits(response) {
+  if (response.action !== AgentAction.SAFETY_ESCALATION) {
+    return [];
+  }
+  return (response.reasonCodes ?? []).filter(
+    (code) => !code.startsWith("TERMINAL_"),
+  );
 }
