@@ -38,13 +38,11 @@ export const departmentRouterTool = Object.freeze({
     if (disposition === "EMERGENCY_NOW") {
       return { department: "急诊科", timing: "立即" };
     }
-    if (chiefComplaint === "headache") {
-      return { department: "神经内科或全科门诊", timing: disposition };
-    }
-    if (chiefComplaint === "chest_pain") {
-      return { department: "急诊科或心血管内科", timing: disposition };
-    }
-    return { department: "全科门诊", timing: disposition };
+    const protocol = getProtocol(chiefComplaint);
+    return {
+      department: protocol?.department ?? "全科门诊",
+      timing: disposition,
+    };
   },
 });
 

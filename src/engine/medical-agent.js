@@ -174,7 +174,7 @@ export class MedicalSafetyAgent {
         (state.questionAttempts[decision.question.id] ?? 0) + 1;
     }
 
-    const response = this.#buildDecisionResponse(state, decision, toolTraces);
+    const response = this.#buildDecisionResponse(state, decision, toolTraces, protocol);
     if (isTerminalAction(decision.action)) {
       state.closed = true;
     }
@@ -194,7 +194,7 @@ export class MedicalSafetyAgent {
     return SERVICE_NOTICE;
   }
 
-  #buildDecisionResponse(state, decision, toolTraces) {
+  #buildDecisionResponse(state, decision, toolTraces, protocol) {
     if (decision.action === AgentAction.ASK_MORE) {
       return {
         action: decision.action,
@@ -261,7 +261,7 @@ export class MedicalSafetyAgent {
             toolTraces,
           );
 
-    return buildDispositionResponse(decision, department);
+    return buildDispositionResponse(decision, department, protocol);
   }
 
   #handleInputSafety(state, result) {
@@ -354,7 +354,12 @@ export class MedicalSafetyAgent {
     this.#transitionState(state, decision);
     state.closed = true;
     const toolTraces = [];
-    const response = this.#buildDecisionResponse(state, decision, toolTraces);
+    const response = this.#buildDecisionResponse(
+      state,
+      decision,
+      toolTraces,
+      probe.protocol,
+    );
     return this.#recordAndReturn(state, response, toolTraces);
   }
 
@@ -482,7 +487,10 @@ export class MedicalSafetyAgent {
   }
 }
 
-function buildDispositionResponse(decision, department) {
+function buildDispositionResponse(decision, department, protocol) {
+  const warning =
+    protocol?.warning ??
+    "如果症状明显加重或出现新的危险信号，请立即联系医疗专业人员。";
   if (decision.disposition === Disposition.URGENT_SAME_DAY) {
     return {
       action: AgentAction.DISPOSITION,
@@ -504,7 +512,7 @@ function buildDispositionResponse(decision, department) {
       guidance: department
         ? [`建议就诊：${department.department}。`]
         : ["请联系当地医疗机构安排门诊评估。"],
-      warnings: ["如出现突然剧烈头痛、肢体无力、说话不清、意识异常或症状明显加重，请立即就医。"],
+      warnings: [warning],
     };
   }
   return {
@@ -513,7 +521,7 @@ function buildDispositionResponse(decision, department) {
     reasonCodes: decision.reasonCodes,
     message: "目前未触发本路径的危险信号，可暂时观察症状变化。",
     guidance: ["注意休息并记录症状变化；若持续不缓解，请安排门诊评估。"],
-    warnings: ["如出现突然剧烈头痛、肢体无力、说话不清、意识异常或症状明显加重，请立即就医。"],
+    warnings: [warning],
   };
 }
 

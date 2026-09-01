@@ -58,3 +58,10 @@ console.log(second.disposition); // EMERGENCY_NOW
 - [Phase 1 Core Validation Report](docs/phase-1-validation-report.md)
 
 当前验证结论为 **PASS_WITH_CONDITIONS**：可以有条件进入 LLM 结构化语义抽取集成，但不能据此开始临床部署、扩展症状范围或宣称已经验证自然语言理解能力。
+
+## Phase 2A Semantic Extraction Shadow Mode
+
+- [Phase 2A Semantic Extraction Design](docs/phase-2a-semantic-extraction-design.md)
+- [Phase 2A Evaluation Report](docs/phase-2a-evaluation-report.md)
+
+Phase 2A 提供严格的 pathway-specific Extraction Schema、可注入的真实 LLM provider、独立 Shadow Evaluation Log、24 条 Gold Cases、8 条 Semantic Sentinels 和 10 项语义评测指标。LLM candidate 不会更新 CaseState，也不会改变 Phase 1 的 disposition、state transition 或工具调用。

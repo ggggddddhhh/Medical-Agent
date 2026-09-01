@@ -10,7 +10,7 @@ export function extractFacts(text, state, protocol) {
     factStatuses: {},
   };
 
-  extractSemanticRedFlags(normalized, facts);
+  mergeProtocolFacts(facts, protocol?.extractDeterministicFacts?.(normalized));
   const unavailableStatus = parseUnavailableStatus(normalized);
 
   if (state.decisionState.pendingQuestionId === "CONFIRM_ADULT") {
@@ -88,92 +88,10 @@ function extractPatientContext(text) {
   };
 }
 
-function extractSemanticRedFlags(text, facts) {
-  if (
-    /(突然|一下|瞬间).*(最严重|剧烈|难以忍受|受不了)|雷击样|霹雳样|几秒.*最严重|几分钟.*最严重/.test(
-      text,
-    ) &&
-    !negates(text, "突然|一下|瞬间|雷击样|霹雳样")
-  ) {
-    facts.symptoms.onsetPattern = "sudden_severe";
-  } else if (/(逐渐|慢慢|一点点|越来越)/.test(text)) {
-    facts.symptoms.onsetPattern = "gradual";
+function mergeProtocolFacts(target, source = {}) {
+  for (const section of ["symptoms", "redFlags", "relevantHistory"]) {
+    Object.assign(target[section] ??= {}, source[section] ?? {});
   }
-
-  if (
-    (/(这辈子|有生以来|从来没有).*(最严重|这么痛|这么疼)|最严重的一次/.test(text)) &&
-    !negates(text, "最严重|这么痛|这么疼")
-  ) {
-    facts.redFlags.worstEverHeadache = true;
-  }
-
-  if (
-    /(一侧|半边|左边|右边).*(无力|没劲|麻木)|嘴歪|口角歪|说话.*(不清|不利索)|言语不清|视物异常|看不清|复视/.test(
-      text,
-    ) &&
-    !negates(text, "一侧|半边|左边|右边|嘴歪|口角歪|说话|言语|视物|复视")
-  ) {
-    facts.redFlags.neurologicalDeficit = true;
-  }
-
-  const mentionsFever = /(发热|发烧|高烧)/.test(text);
-  const mentionsNeckStiffness = /(脖子|颈部).*(僵|硬|不能低头|难以低头)/.test(text);
-  if (
-    mentionsFever &&
-    mentionsNeckStiffness &&
-    !negates(text, "发热|发烧|高烧|脖子|颈部")
-  ) {
-    facts.redFlags.feverNeckStiffness = true;
-  }
-
-  if (
-    /(意识不清|神志不清|意识模糊|昏迷|叫不醒|失去意识)/.test(text) &&
-    !negates(text, "意识|神志|昏迷|叫不醒")
-  ) {
-    facts.redFlags.alteredConsciousness = true;
-  }
-
-  if (
-    (/(撞到|撞了|摔到|磕到|头部受伤|外伤后).*(头|脑)|头.*(撞到|撞了|摔到|磕到)/.test(text)) &&
-    !negates(text, "撞到|撞了|摔到|磕到|头部受伤|外伤")
-  ) {
-    facts.redFlags.recentHeadTrauma = true;
-  }
-
-  if (
-    /(喘不上|喘不过|呼吸困难|明显憋气|无法呼吸)/.test(text) &&
-    !negates(text, "喘不上|喘不过|呼吸困难|憋气|无法呼吸")
-  ) {
-    facts.redFlags.difficultyBreathing = true;
-  }
-
-  if (
-    (/(石头|重物).*(压|压着)|压.*(石头|重物)|压榨|紧缩|胸口.*发紧|胸.*压迫/.test(text)) &&
-    !negates(text, "石头|重物|压榨|紧缩|发紧|压迫")
-  ) {
-    facts.redFlags.pressureOrCrushing = true;
-  }
-
-  if (
-    (/(疼|痛).*(扩散|放射|窜到).*(手臂|胳膊|肩|背|颈|脖子|下颌|牙)|(?:手臂|胳膊|肩背|下颌).*(也痛|也疼)/.test(text)) &&
-    !negates(text, "扩散|放射|窜到|手臂|胳膊|肩背|下颌")
-  ) {
-    facts.redFlags.painRadiation = true;
-  }
-
-  if (
-    /(晕厥|晕倒|快要晕|差点晕|险些晕|冷汗|大汗|濒死感)/.test(text) &&
-    !negates(text, "晕厥|晕倒|快要晕|差点晕|险些晕|冷汗|大汗|濒死感")
-  ) {
-    facts.redFlags.collapseOrSweating = true;
-  }
-}
-
-function negates(text, conceptPattern) {
-  const normalized = text.replaceAll("是不是", "是否");
-  return new RegExp(
-    `(?:没有|并无|无明显|无|不是|并非|否认|不伴).{0,8}(?:${conceptPattern})`,
-  ).test(normalized);
 }
 
 function parsePendingAnswer(text, parser) {

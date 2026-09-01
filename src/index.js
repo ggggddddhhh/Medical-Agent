@@ -34,3 +34,19 @@ export {
   validateOutput,
   OutputSafetyError,
 } from "./safety/output-safety.js";
+export {
+  createExtractionJsonSchema,
+  ExtractionSchemaError,
+  FactTemporality,
+  SEMANTIC_SCHEMA_VERSION,
+  SemanticFactStatus,
+  validateExtractionEnvelope,
+} from "./semantic/extraction-schema.js";
+export {
+  buildExtractionInstruction,
+  SEMANTIC_EXTRACTOR_VERSION,
+  SemanticExtractor,
+} from "./semantic/semantic-extractor.js";
+export { OpenAIResponsesProvider } from "./semantic/openai-responses-provider.js";
+export { SemanticShadowAgent } from "./semantic/shadow-mode.js";
+export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";

@@ -1,6 +1,5 @@
 import {
   AgentAction,
-  ChiefComplaint,
   Disposition,
   POLICY_VERSION,
   FactStatus,
@@ -81,7 +80,10 @@ export function decideNextAction(state, protocol) {
     ]);
   }
 
-  return determineDisposition(state, protocol);
+  if (typeof protocol.determineDisposition !== "function") {
+    return insufficient(["PATHWAY_DISPOSITION_STRATEGY_UNAVAILABLE"]);
+  }
+  return protocol.determineDisposition(state);
 }
 
 function insufficient(reasonCodes) {
@@ -89,41 +91,6 @@ function insufficient(reasonCodes) {
     action: AgentAction.INSUFFICIENT_INFO,
     disposition: Disposition.INSUFFICIENT_INFORMATION,
     reasonCodes,
-    policyVersion: POLICY_VERSION,
-  };
-}
-
-function determineDisposition(state, protocol) {
-  if (protocol.chiefComplaint === ChiefComplaint.CHEST_PAIN) {
-    return {
-      action: AgentAction.DISPOSITION,
-      disposition: Disposition.URGENT_SAME_DAY,
-      reasonCodes: ["CHEST_PAIN_NO_EMERGENCY_FLAG_BUT_REQUIRES_SAME_DAY_REVIEW"],
-      policyVersion: POLICY_VERSION,
-    };
-  }
-
-  const severity = state.symptoms.severity;
-  if (severity >= 7) {
-    return {
-      action: AgentAction.DISPOSITION,
-      disposition: Disposition.URGENT_SAME_DAY,
-      reasonCodes: ["HEADACHE_HIGH_REPORTED_SEVERITY"],
-      policyVersion: POLICY_VERSION,
-    };
-  }
-  if (severity <= 3) {
-    return {
-      action: AgentAction.DISPOSITION,
-      disposition: Disposition.SELF_MONITOR,
-      reasonCodes: ["HEADACHE_LOW_SEVERITY_NO_PROTOCOL_RED_FLAGS"],
-      policyVersion: POLICY_VERSION,
-    };
-  }
-  return {
-    action: AgentAction.DISPOSITION,
-    disposition: Disposition.CLINIC_SOON,
-    reasonCodes: ["HEADACHE_MODERATE_SEVERITY_NO_PROTOCOL_RED_FLAGS"],
     policyVersion: POLICY_VERSION,
   };
 }
