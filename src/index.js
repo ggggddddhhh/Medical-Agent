@@ -57,8 +57,39 @@ export {
   DEEPSEEK_V4_FLASH_MODEL,
 } from "./semantic/deepseek-responses-adapter.js";
 export { SemanticShadowAgent } from "./semantic/shadow-mode.js";
+export {
+  isHighRiskSemanticPath,
+  SAFETY_SIGNAL_DETECTOR_VERSION,
+  SafetySignalDetector,
+} from "./semantic/safety-signal-detector.js";
+export {
+  FACT_EVIDENCE_VERSION,
+  findFactEvidence,
+} from "./semantic/fact-evidence.js";
+export {
+  buildVerifierInput,
+  TARGETED_VERIFIER_PROMPT_VERSION,
+  TARGETED_VERIFIER_VERSION,
+  TargetedVerifier,
+  verifierSchema,
+  VerifierVerdict,
+} from "./semantic/targeted-verifier.js";
+export {
+  decideSemanticFact,
+  SEMANTIC_GATE_VERSION,
+  SemanticGateDecision,
+} from "./semantic/semantic-gate.js";
+export {
+  HYBRID_SEMANTIC_VALIDATOR_VERSION,
+  HybridSemanticValidator,
+  sanitizeHybridValidation,
+} from "./semantic/hybrid-semantic-validator.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
 export {
   evaluateRealModel,
   REAL_MODEL_DATASET_VERSION,
 } from "./evaluation/real-model-evaluator.js";
+export {
+  evaluateHybridRealModel,
+  HYBRID_EVALUATION_VERSION,
+} from "./evaluation/hybrid-real-model-evaluator.js";

@@ -2,22 +2,28 @@ import { randomUUID } from "node:crypto";
 
 import { extractFacts } from "../extraction/fact-extractor.js";
 import { detectChiefComplaint, getProtocol } from "../protocols/index.js";
+import { sanitizeHybridValidation } from "./hybrid-semantic-validator.js";
 
 export class SemanticShadowAgent {
   #agent;
   #extractor;
+  #hybridValidator;
   #evaluations = [];
   #pending = new Map();
 
-  constructor({ agent, extractor } = {}) {
+  constructor({ agent, extractor, hybridValidator = null } = {}) {
     if (!agent || typeof agent.handleMessage !== "function") {
       throw new TypeError("SemanticShadowAgent requires a core agent.");
     }
     if (!extractor || typeof extractor.run !== "function") {
       throw new TypeError("SemanticShadowAgent requires a semantic extractor.");
     }
+    if (hybridValidator && typeof hybridValidator.validate !== "function") {
+      throw new TypeError("hybridValidator must expose validate.");
+    }
     this.#agent = agent;
     this.#extractor = extractor;
+    this.#hybridValidator = hybridValidator;
   }
 
   startSession(context) {
@@ -84,6 +90,9 @@ export class SemanticShadowAgent {
           errorCode: "UNSUPPORTED_PATHWAY",
           candidate: null,
         };
+    const hybridValidation = protocol && this.#hybridValidator
+      ? await this.#hybridValidator.validate({ message, protocol, extraction })
+      : null;
     const record = {
       evaluationId: randomUUID(),
       timestamp: new Date().toISOString(),
@@ -104,6 +113,9 @@ export class SemanticShadowAgent {
         deterministicFacts,
         extraction.candidate?.facts ?? [],
       ),
+      hybridValidation: hybridValidation
+        ? sanitizeHybridValidation(hybridValidation)
+        : null,
     };
     this.#evaluations.push(record);
     return record;

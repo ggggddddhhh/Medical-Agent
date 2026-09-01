@@ -46,10 +46,16 @@ export class OpenAICompatibleResponsesAdapter {
     return this.#endpoint;
   }
 
-  async generate({ message, systemInstruction, jsonSchema, signal }) {
+  async generate({
+    message,
+    systemInstruction,
+    jsonSchema,
+    schemaName = "clinical_fact_extraction",
+    signal,
+  }) {
     const format = {
       type: "json_schema",
-      name: "clinical_fact_extraction",
+      name: schemaName,
       schema: jsonSchema,
     };
     if (this.#includeStrict) {
