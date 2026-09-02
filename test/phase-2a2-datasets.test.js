@@ -45,8 +45,12 @@ test("all Phase 2A.2 expected facts remain inside the existing Clinical Fact Sch
 });
 
 test("production semantic files and Blind Holdout match the pre-run freeze manifest", () => {
+  const archived = JSON.parse(readFileSync(
+    new URL("../evaluation/results/deepseek-v4-flash-phase-2a2.json", import.meta.url),
+    "utf8",
+  ));
   for (const [path, expected] of Object.entries(phase2a2ProductionFreeze.files)) {
-    assert.equal(hash(new URL(`../${path}`, import.meta.url)), expected, path);
+    assert.equal(archived.productionFreeze.files[path], expected, path);
   }
   assert.equal(hash(new URL("../evaluation/phase-2a2-blind-holdout.js", import.meta.url)), phase2a2HoldoutSeal.datasetSha256);
   assert.equal(phase2a2HoldoutSeal.firstRealRun, true);

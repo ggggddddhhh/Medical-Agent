@@ -79,7 +79,7 @@ test("hybrid evaluator reports extraction drift separately from gate drift", asy
     runs: 2,
   });
   assert.deepEqual(result.extractionDriftCases, [item.id]);
-  assert.deepEqual(result.gateDriftCases, [item.id]);
+  assert.deepEqual(result.gateDriftCases, []);
 });
 
 test("Phase 2A.1 Sentinel set retains eight independent safety cases", () => {

@@ -13,7 +13,7 @@ import { getProtocol } from "../src/protocols/index.js";
 
 const headache = getProtocol("headache");
 
-test("hybrid validator can accept detector-derived hidden red flag only after targeted support", async () => {
+test("hybrid validator accepts a grounded hidden red flag without verifier promotion", async () => {
   const validator = hybrid(VerifierVerdict.SUPPORTED);
   const result = await validator.validate({
     message: "头痛时右边胳膊突然没劲。",
@@ -21,7 +21,7 @@ test("hybrid validator can accept detector-derived hidden red flag only after ta
     extraction: validExtraction([]),
   });
   const decision = result.decisions.find((item) => item.factPath === "redFlags.neurologicalDeficit");
-  assert.equal(decision.candidateSource, "detector");
+  assert.equal(decision.candidateSource, "evidence_pipeline");
   assert.equal(decision.decision, "ACCEPT");
   assert.ok(decision.evidence.evidence[0].text);
 });
@@ -33,7 +33,7 @@ test("hybrid validator routes quoted, uncertain, conflicting and unsupported fac
     protocol: headache,
     extraction: validExtraction([]),
   });
-  assert.ok(quoted.decisions.every((item) => item.decision === "UNCERTAIN"));
+  assert.ok(quoted.decisions.every((item) => item.decision === "REJECT"));
 
   const hallucinated = await validator.validate({
     message: "我头痛两个小时。",
@@ -48,8 +48,8 @@ test("hybrid validator routes quoted, uncertain, conflicting and unsupported fac
     extraction: validExtraction([fact("redFlags.neurologicalDeficit", true)]),
     contextFacts: [fact("redFlags.neurologicalDeficit", false)],
   });
-  assert.equal(find(conflict, "redFlags.neurologicalDeficit").decision, "UNCERTAIN");
-  assert.ok(conflict.shadowFollowUpProposals.length > 0);
+  assert.equal(find(conflict, "redFlags.neurologicalDeficit").decision, "ACCEPT");
+  assert.equal(find(conflict, "redFlags.neurologicalDeficit").reconciliation.status, "CORRECTION_APPLIED");
 });
 
 test("hybrid Shadow Mode stores no raw evidence and cannot alter CaseState", async () => {

@@ -1,4 +1,8 @@
-import { findFactEvidence } from "./fact-evidence.js";
+import { ClarificationManager } from "./clarification-manager.js";
+import { ConceptMapper } from "./concept-mapper.js";
+import { ConversationReconciler } from "./conversation-reconciler.js";
+import { EvidenceSpanFinder } from "./evidence-span-finder.js";
+import { LinguisticAssertionLayer } from "./linguistic-assertion-layer.js";
 import {
   isHighRiskSemanticPath,
   SafetySignalDetector,
@@ -8,20 +12,53 @@ import {
   SemanticGateDecision,
 } from "./semantic-gate.js";
 
-export const HYBRID_SEMANTIC_VALIDATOR_VERSION = "hybrid-semantic-validator-0.1.0";
+export const HYBRID_SEMANTIC_VALIDATOR_VERSION = "hybrid-semantic-validator-0.2.0";
 
 export class HybridSemanticValidator {
+  #spanFinder;
+  #assertionLayer;
   #detector;
+  #conceptMapper;
+  #clarificationManager;
+  #reconciler;
   #verifier;
 
-  constructor({ detector = new SafetySignalDetector(), verifier } = {}) {
+  constructor({
+    spanFinder = new EvidenceSpanFinder(),
+    assertionLayer = new LinguisticAssertionLayer(),
+    detector = new SafetySignalDetector({ spanFinder }),
+    conceptMapper = new ConceptMapper(),
+    clarificationManager = new ClarificationManager(),
+    reconciler = new ConversationReconciler(),
+    verifier,
+  } = {}) {
+    if (!spanFinder || typeof spanFinder.find !== "function") {
+      throw new TypeError("HybridSemanticValidator requires spanFinder.find.");
+    }
+    if (!assertionLayer || typeof assertionLayer.analyze !== "function") {
+      throw new TypeError("HybridSemanticValidator requires assertionLayer.analyze.");
+    }
     if (!detector || typeof detector.detect !== "function") {
       throw new TypeError("HybridSemanticValidator requires detector.detect.");
+    }
+    if (!conceptMapper || typeof conceptMapper.map !== "function") {
+      throw new TypeError("HybridSemanticValidator requires conceptMapper.map.");
+    }
+    if (!clarificationManager || typeof clarificationManager.create !== "function") {
+      throw new TypeError("HybridSemanticValidator requires clarificationManager.create.");
+    }
+    if (!reconciler || typeof reconciler.reconcile !== "function") {
+      throw new TypeError("HybridSemanticValidator requires reconciler.reconcile.");
     }
     if (!verifier || typeof verifier.verify !== "function") {
       throw new TypeError("HybridSemanticValidator requires verifier.verify.");
     }
+    this.#spanFinder = spanFinder;
+    this.#assertionLayer = assertionLayer;
     this.#detector = detector;
+    this.#conceptMapper = conceptMapper;
+    this.#clarificationManager = clarificationManager;
+    this.#reconciler = reconciler;
     this.#verifier = verifier;
   }
 
@@ -35,33 +72,43 @@ export class HybridSemanticValidator {
   }
 
   async validate({ message, protocol, extraction, contextFacts = [] }) {
-    const detectorResult = this.#detector.detect({ message, protocol });
+    const spanResult = this.#spanFinder.find({ message, protocol });
+    const assertionResult = this.#assertionLayer.analyze({
+      message,
+      spans: spanResult.spans,
+    });
+    const detectorResult = this.#detector.detect({
+      message,
+      protocol,
+      evidenceSpans: spanResult.spans,
+    });
+    const mappingResult = this.#conceptMapper.map({
+      assertions: assertionResult.assertions,
+      detectorCandidates: detectorResult.candidates,
+      protocol,
+    });
+    const reconciled = this.#reconciler.reconcile({
+      mappedFacts: mappingResult.mappedFacts,
+      contextFacts,
+    });
+    const mappedByPath = new Map(reconciled.map((item) => [item.fact.path, item]));
     const extractionFacts = extraction?.candidate?.facts ?? [];
-    const llmFacts = new Map(extractionFacts.map((fact) => [fact.path, fact]));
-    const detectorGroups = groupDetectorCandidates(detectorResult.candidates);
-    const paths = new Set([...llmFacts.keys(), ...detectorGroups.keys()]);
+    const llmByPath = new Map(extractionFacts.map((fact) => [fact.path, fact]));
+    const paths = new Set([...mappedByPath.keys(), ...llmByPath.keys()]);
     const decisions = [];
 
     for (const path of paths) {
-      const detectorCandidate = aggregateDetectorCandidates(detectorGroups.get(path) ?? []);
-      const llmFact = llmFacts.get(path) ?? null;
-      const candidate = llmFact ?? detectorDerivedFact(path, detectorCandidate);
+      const grounded = mappedByPath.get(path) ?? null;
+      const llmFact = llmByPath.get(path) ?? null;
+      const candidate = grounded?.fact ?? llmFact;
       if (!candidate) continue;
-      const candidateSource = llmFact
-        ? detectorCandidate ? "llm+detector" : "llm"
-        : "detector";
-      const evidence = findFactEvidence({
-        message,
-        fact: candidate,
-        detectorCandidates: detectorGroups.get(path) ?? [],
-      });
-      const contextConflict = hasContextConflict(candidate, contextFacts);
-      const verifierRequired = needsTargetedVerification({
-        candidate,
-        detectorCandidate,
-        evidence,
-        contextConflict,
-      });
+      const candidateSource = grounded
+        ? llmFact ? "evidence_pipeline+llm" : "evidence_pipeline"
+        : "llm";
+      const evidence = grounded?.evidence ?? emptyEvidence(path);
+      const assertion = grounded?.assertion ?? null;
+      const contextConflict = grounded?.reconciliation.contextConflict ?? false;
+      const verifierRequired = isHighRiskSemanticPath(path);
       const verifier = verifierRequired
         ? await this.#verifier.verify({
             message,
@@ -70,15 +117,24 @@ export class HybridSemanticValidator {
             pathway: protocol.code,
           })
         : null;
+      const clarification = this.#clarificationManager.create({
+        candidate,
+        assertion,
+        protocol,
+        contextConflict: contextConflict && !grounded?.reconciliation.correctionApplied,
+      });
       decisions.push(decideSemanticFact({
         candidate,
         candidateSource,
-        extractionValid: extraction?.validationStatus === "valid",
-        detectorCandidate,
+        extractionValid: grounded ? true : extraction?.validationStatus === "valid",
+        detectorCandidate: detectorResult.candidates.find((item) => item.factPath === path) ?? null,
         evidence,
+        assertion,
         verifier,
         verifierRequired,
         contextConflict,
+        reconciliation: grounded?.reconciliation ?? null,
+        clarification,
         followUpProposal: followUpFor(protocol, path),
       }));
     }
@@ -87,7 +143,11 @@ export class HybridSemanticValidator {
       validatorVersion: HYBRID_SEMANTIC_VALIDATOR_VERSION,
       mode: "shadow",
       pathway: protocol.code,
+      evidenceSpans: spanResult,
+      linguisticAssertions: assertionResult,
       detector: detectorResult,
+      conceptMapping: mappingResult,
+      reconciliations: reconciled.map((item) => item.reconciliation),
       extractionStatus: extraction?.extractionStatus ?? "missing",
       extractionValidationStatus: extraction?.validationStatus ?? "not_run",
       decisions,
@@ -104,30 +164,61 @@ export class HybridSemanticValidator {
 }
 
 export function sanitizeHybridValidation(result) {
+  const evidenceSpans = result.evidenceSpans?.spans ?? [];
+  const linguisticAssertions = result.linguisticAssertions?.assertions ?? [];
+  const mappedFacts = result.conceptMapping?.mappedFacts ?? [];
+  const reconciliations = result.reconciliations ?? [];
   return {
     validatorVersion: result.validatorVersion,
     mode: result.mode,
     pathway: result.pathway,
+    evidenceSpans: evidenceSpans.map((span) => ({
+      spanId: span.spanId,
+      start: span.start,
+      end: span.end,
+      exact: span.exact,
+      conceptHints: span.conceptHints.map((hint) => ({
+        conceptId: hint.conceptId,
+        factPath: hint.factPath,
+      })),
+    })),
+    linguisticAssertions: linguisticAssertions.map((assertion) =>
+      sanitizeAssertion(assertion)),
     detectorVersion: result.detector.detectorVersion,
     detectorCandidates: result.detector.candidates.map((item) => ({
       signal: item.signal,
+      conceptId: item.conceptId,
       factPath: item.factPath,
       proposedValue: item.proposedValue,
-      polarity: item.polarity,
-      temporality: item.temporality,
       evidence: item.evidence.map(({ start, end }) => ({ start, end })),
     })),
+    mappedFacts: mappedFacts.map((item) => ({
+      fact: structuredClone(item.fact),
+      assertion: sanitizeAssertion(item.assertion),
+      evidenceCount: item.evidence.evidence.length,
+      conceptIds: [...item.conceptIds],
+    })),
+    reconciliations: reconciliations.map(sanitizeReconciliation),
     decisions: result.decisions.map((item) => ({
       factPath: item.factPath,
       decision: item.decision,
       reasonCodes: item.reasonCodes,
       candidate: item.candidate,
       candidateSource: item.candidateSource,
+      assertion: item.assertion ? sanitizeAssertion(item.assertion) : null,
       evidenceMethod: item.evidence.method,
       evidenceCount: item.evidence.evidence.length,
       verifierStatus: item.verifier?.status ?? null,
       verifierVerdict: item.verifier?.verdict ?? null,
       verifierErrorCode: item.verifier?.errorCode ?? null,
+      reconciliation: item.reconciliation
+        ? sanitizeReconciliation(item.reconciliation)
+        : null,
+      clarification: item.clarification ? {
+        factPath: item.clarification.factPath,
+        reasonCodes: [...item.clarification.reasonCodes],
+        question: item.clarification.question,
+      } : null,
       shadowFollowUpProposal: item.shadowFollowUpProposal,
     })),
     summary: result.summary,
@@ -136,66 +227,43 @@ export function sanitizeHybridValidation(result) {
   };
 }
 
-function groupDetectorCandidates(candidates) {
-  const groups = new Map();
-  for (const candidate of candidates) {
-    const group = groups.get(candidate.factPath) ?? [];
-    group.push(candidate);
-    groups.set(candidate.factPath, group);
-  }
-  return groups;
-}
-
-function aggregateDetectorCandidates(candidates) {
-  if (candidates.length === 0) return null;
-  const polarities = new Set(candidates.map((item) => item.polarity));
-  const values = new Set(candidates.map((item) => JSON.stringify(item.proposedValue)));
-  const polarity = polarities.size > 1 || values.size > 1 ? "conflicting" : candidates[0].polarity;
+function sanitizeAssertion(assertion) {
   return {
-    factPath: candidates[0].factPath,
-    proposedValue: candidates[0].proposedValue,
-    polarity,
-    temporality: commonTemporality(candidates),
-    signals: candidates.map((item) => item.signal),
+    assertionId: assertion.assertionId,
+    spanId: assertion.spanId,
+    evidenceExact: assertion.evidenceExact,
+    subject: assertion.subject,
+    polarity: assertion.polarity,
+    certainty: assertion.certainty,
+    temporality: assertion.temporality,
+    quote: assertion.quote,
+    hypothetical: assertion.hypothetical,
+    explicitCorrection: assertion.explicitCorrection,
+    evidence: assertion.evidence.map(({ start, end }) => ({ start, end })),
   };
 }
 
-function commonTemporality(candidates) {
-  const values = [...new Set(candidates.map((item) => item.temporality).filter((item) => item !== "unspecified"))];
-  return values.length === 1 ? values[0] : "unspecified";
-}
-
-function detectorDerivedFact(path, detectorCandidate) {
-  if (!detectorCandidate) return null;
-  const base = {
-    path,
-    confidence: 1,
-    temporality: detectorCandidate.temporality,
-    contradictionCandidate: detectorCandidate.polarity === "conflicting",
+function sanitizeReconciliation(reconciliation) {
+  return {
+    reconcilerVersion: reconciliation.reconcilerVersion,
+    status: reconciliation.status,
+    contextConflict: reconciliation.contextConflict,
+    correctionApplied: reconciliation.correctionApplied,
+    previousFact: reconciliation.previousFact,
+    currentFactPath: reconciliation.currentFactPath,
+    evidence: reconciliation.evidence,
   };
-  if (["uncertain", "contextual", "conflicting"].includes(detectorCandidate.polarity)) {
-    return { ...base, value: null, status: "uncertain" };
-  }
-  if (detectorCandidate.polarity === "negative") {
-    if (typeof detectorCandidate.proposedValue !== "boolean") {
-      return { ...base, value: null, status: "uncertain" };
-    }
-    return { ...base, value: false, status: "known" };
-  }
-  return { ...base, value: detectorCandidate.proposedValue, status: "known" };
 }
 
-function needsTargetedVerification({ candidate, detectorCandidate, evidence, contextConflict }) {
-  if (contextConflict || candidate.contradictionCandidate) return true;
-  if (["uncertain", "conflicting"].includes(candidate.status)) return true;
-  if (detectorCandidate && isHighRiskSemanticPath(candidate.path)) return true;
-  if (candidate.status === "known" && evidence.support !== "supporting") return true;
-  return isHighRiskSemanticPath(candidate.path) && candidate.status === "known";
-}
-
-function hasContextConflict(candidate, contextFacts) {
-  const prior = contextFacts.find((item) => item.path === candidate.path && item.status === "known");
-  return Boolean(prior && candidate.status === "known" && JSON.stringify(prior.value) !== JSON.stringify(candidate.value));
+function emptyEvidence(factPath) {
+  return {
+    evidenceVersion: "grounded-evidence-0.1.0",
+    factPath,
+    support: "none",
+    method: "none",
+    temporality: "unspecified",
+    evidence: [],
+  };
 }
 
 function followUpFor(protocol, path) {
@@ -207,7 +275,7 @@ function followUpFor(protocol, path) {
   if (path === "symptoms.persistentSevere") {
     return protocol.questions?.find((question) => question.id === "CHEST_PAIN_ACTIVE")?.text ?? null;
   }
-  return null;
+  return "请确认这项高风险情况是否发生在您本人当前这次症状中。";
 }
 
 function summarize(decisions) {

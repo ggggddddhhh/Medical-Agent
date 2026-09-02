@@ -67,6 +67,31 @@ export {
   findFactEvidence,
 } from "./semantic/fact-evidence.js";
 export {
+  CLINICAL_EVIDENCE_LEXICON_VERSION,
+  clinicalEvidenceEntries,
+} from "./semantic/clinical-evidence-lexicon.js";
+export {
+  EVIDENCE_SPAN_FINDER_VERSION,
+  EvidenceSpanFinder,
+  verifyEvidenceSpan,
+} from "./semantic/evidence-span-finder.js";
+export {
+  LINGUISTIC_ASSERTION_LAYER_VERSION,
+  LinguisticAssertionLayer,
+} from "./semantic/linguistic-assertion-layer.js";
+export {
+  CONCEPT_MAPPER_VERSION,
+  ConceptMapper,
+} from "./semantic/concept-mapper.js";
+export {
+  CLARIFICATION_MANAGER_VERSION,
+  ClarificationManager,
+} from "./semantic/clarification-manager.js";
+export {
+  CONVERSATION_RECONCILER_VERSION,
+  ConversationReconciler,
+} from "./semantic/conversation-reconciler.js";
+export {
   buildVerifierInput,
   TARGETED_VERIFIER_PROMPT_VERSION,
   TARGETED_VERIFIER_VERSION,
@@ -97,3 +122,7 @@ export {
   evaluateSemanticRobustness,
   ROBUSTNESS_EVALUATION_VERSION,
 } from "./evaluation/semantic-robustness-evaluator.js";
+export {
+  calculateClinicalAssertionMetrics,
+  CLINICAL_ASSERTION_METRICS_VERSION,
+} from "./evaluation/clinical-assertion-metrics.js";

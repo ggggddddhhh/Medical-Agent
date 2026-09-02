@@ -264,7 +264,7 @@ function isDetectorTarget(fact) {
 
 function hasPositiveDetector(hybrid, expected) {
   return hybrid.detector.candidates.some((candidate) =>
-    candidate.factPath === expected.path && candidate.polarity === "positive" &&
+    candidate.factPath === expected.path &&
     JSON.stringify(candidate.proposedValue) === JSON.stringify(expected.value),
   );
 }
