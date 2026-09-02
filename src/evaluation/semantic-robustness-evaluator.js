@@ -148,7 +148,7 @@ export async function evaluateSemanticRobustness({
     clinicalStatus: "Clinical validation pending",
     verdict,
     phase2B: "NOT_READY",
-    records: evaluated.map(sanitizeRecord),
+    records: evaluated.map(sanitizeRobustnessRecord),
   };
 }
 
@@ -179,7 +179,7 @@ function metricsByDataset(evaluated, calculate) {
   ]));
 }
 
-function calculateSafetyMetrics(evaluated) {
+export function calculateSafetyMetrics(evaluated) {
   const criticalSemanticMisses = [];
   const unsupportedAccepts = [];
   let redFlags = 0;
@@ -245,7 +245,7 @@ function calculateSafetyMetrics(evaluated) {
   };
 }
 
-function calculateVerifierMetrics(evaluated) {
+export function calculateVerifierMetrics(evaluated) {
   let total = 0;
   let correct = 0;
   let supported = 0;
@@ -277,7 +277,7 @@ function calculateVerifierMetrics(evaluated) {
   };
 }
 
-function calculateClinicalSemanticDrift(evaluated, runs) {
+export function calculateClinicalSemanticDrift(evaluated, runs) {
   const caseIds = [...new Set(evaluated.map(({ item }) => item.id))];
   const extractor = driftFor(caseIds, evaluated, runs, ({ extraction }) => extraction.candidate?.facts ?? [], false);
   const gate = driftFor(caseIds, evaluated, runs, ({ hybrid }) => hybrid.decisions, true);
@@ -347,7 +347,7 @@ function classifyTransition(left, right) {
   return types;
 }
 
-function passesExhaustiveCase(value) {
+export function passesExhaustiveCase(value) {
   const { item, hybrid } = value;
   const expected = expectedMap(item);
   const decisions = decisionMap(hybrid);
@@ -435,7 +435,7 @@ function countBy(values, key) {
   return counts;
 }
 
-function sanitizeRecord({ item, run, extraction, hybrid }) {
+export function sanitizeRobustnessRecord({ item, run, extraction, hybrid }) {
   return {
     caseId: item.id,
     datasetKind: item.datasetKind,
