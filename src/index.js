@@ -93,3 +93,7 @@ export {
   evaluateHybridRealModel,
   HYBRID_EVALUATION_VERSION,
 } from "./evaluation/hybrid-real-model-evaluator.js";
+export {
+  evaluateSemanticRobustness,
+  ROBUSTNESS_EVALUATION_VERSION,
+} from "./evaluation/semantic-robustness-evaluator.js";

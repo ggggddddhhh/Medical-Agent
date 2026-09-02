@@ -8,7 +8,8 @@
     "test": "node --test",
     "test:coverage": "node --test --experimental-test-coverage",
     "eval:deepseek": "node scripts/run-phase-2a-deepseek-evaluation.js",
-    "eval:deepseek:phase2a1": "node scripts/run-phase-2a1-deepseek-evaluation.js"
+    "eval:deepseek:phase2a1": "node scripts/run-phase-2a1-deepseek-evaluation.js",
+    "eval:deepseek:phase2a2": "node scripts/run-phase-2a2-deepseek-evaluation.js"
   },
   "engines": {
     "node": ">=22"
