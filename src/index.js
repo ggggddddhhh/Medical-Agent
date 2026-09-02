@@ -109,6 +109,31 @@ export {
   HybridSemanticValidator,
   sanitizeHybridValidation,
 } from "./semantic/hybrid-semantic-validator.js";
+export {
+  PYTHON_AI_SERVICE_PROVIDER_VERSION,
+  PythonAiServiceProvider,
+} from "./phase2b/python-ai-service-provider.js";
+export {
+  CORE_SESSION_BRIDGE_VERSION,
+  CoreSessionBridge,
+} from "./phase2b/core-session-bridge.js";
+export {
+  CLARIFICATION_ANSWER_RESOLVER_VERSION,
+  ClarificationAnswerResolver,
+} from "./phase2b/clarification-answer-resolver.js";
+export {
+  AGENT_LOOP_TRACE_VERSION,
+  AgentLoopTraceStore,
+} from "./phase2b/agent-loop-trace.js";
+export {
+  MULTI_TURN_AGENT_LOOP_VERSION,
+  MultiTurnAgentLoop,
+} from "./phase2b/multi-turn-agent-loop.js";
+export { createPhase2BAgentLoop } from "./phase2b/create-phase2b-agent.js";
+export {
+  AGENT_API_VERSION,
+  createAgentApiServer,
+} from "./phase2b/agent-api-server.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
 export {
   evaluateRealModel,

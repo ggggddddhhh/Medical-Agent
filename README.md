@@ -59,7 +59,7 @@ console.log(second.disposition); // EMERGENCY_NOW
 
 当前验证结论为 **PASS_WITH_CONDITIONS**：可以有条件进入 LLM 结构化语义抽取集成，但不能据此开始临床部署、扩展症状范围或宣称已经验证自然语言理解能力。
 
-## Phase 2A Semantic Extraction Shadow Mode
+## Phase 2A Semantic Extraction
 
 - [Phase 2A Semantic Extraction Design](docs/phase-2a-semantic-extraction-design.md)
 - [Phase 2A Evaluation Report](docs/phase-2a-evaluation-report.md)
@@ -67,4 +67,10 @@ console.log(second.disposition); // EMERGENCY_NOW
 
 Phase 2A 提供严格的 pathway-specific Extraction Schema、可注入的真实 LLM provider、独立 Shadow Evaluation Log、24 条 Gold Cases、8 条 Semantic Sentinels 和 10 项语义评测指标。LLM candidate 不会更新 CaseState，也不会改变 Phase 1 的 disposition、state transition 或工具调用。
 
-DeepSeek V4 Flash 的双轮离线评测结论为 **FAIL / NOT_READY**。主要问题是 Semantic Sentinel、Red Flag Recall、Uncertainty、hallucination 和 run-to-run drift；模型仍只能停留在 Shadow Mode。
+Phase 2A 已完成 Evidence-Grounded Assertion Pipeline、语义鲁棒性与独立 Holdout 验证，最终结论为 **COMPETITION_READY_FOR_PHASE_2B**。该结论仅用于比赛工程晋级，仍不代表临床验证或真实世界部署许可。
+
+## Phase 2B Multi-turn Agent Loop
+
+- [Phase 2B Architecture and API](docs/phase-2b-multi-turn-agent-loop.md)
+
+Phase 2B 在未修改 Safety Core、Semantic Gate、CaseState 和 Clinical Pathway 的前提下增加多轮编排与 REST 边界。Node.js 仍是状态和安全决策权威；Python AI Service 只负责模型调用，为后续 RAG、Embedding 和 Retriever 预留独立服务边界，本阶段尚未加入这些功能。

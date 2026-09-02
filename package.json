@@ -7,6 +7,10 @@
   "scripts": {
     "test": "node --test",
     "test:coverage": "node --test --experimental-test-coverage",
+    "test:python": "node scripts/run-python-tests.js",
+    "test:all": "npm test && npm run test:python",
+    "start:agent-api": "node scripts/run-phase-2b-agent-api.js",
+    "start:python-ai": "node scripts/run-python-ai-service.js",
     "eval:deepseek": "node scripts/run-phase-2a-deepseek-evaluation.js",
     "eval:deepseek:phase2a1": "node scripts/run-phase-2a1-deepseek-evaluation.js",
     "eval:deepseek:phase2a2": "node scripts/run-phase-2a2-deepseek-evaluation.js",
