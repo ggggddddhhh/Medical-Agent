@@ -1,0 +1,6346 @@
+{
+  "evaluationVersion": "phase-2a-subject-promotion-evaluation-1.0.0",
+  "evaluationTimestamp": "2026-09-02T11:14:07.419Z",
+  "mode": "shadow",
+  "provider": "DeepSeek",
+  "extractorModel": "deepseek-v4-flash",
+  "verifierModel": "deepseek-v4-flash",
+  "productionFreeze": {
+    "commit": "cb078fb71a3f675856e2a143180bb8c4ed3773e3",
+    "policy": "Subject ambiguity repair frozen before the promotion Blind Holdout first real-model run.",
+    "files": {
+      "src/semantic/clinical-evidence-lexicon.js": "6a1b77cc73d820c44df49207cb576507a127a5fcc8c41652a2273a1b9a6bdd65",
+      "src/semantic/evidence-span-finder.js": "6cba6c12f8534f1d5a706b1879838b6fa670b54068d6b15c28f0baab06b91f58",
+      "src/semantic/linguistic-assertion-layer.js": "88030fc1f525840ea832018ab5053dcdff932b7d62ec60fed868cb5630ca93b6",
+      "src/semantic/safety-signal-detector.js": "2f820da94ccbfc8eee876f5fe26a56dcf6d691736fa977f967bc5a780c0eac32",
+      "src/semantic/concept-mapper.js": "7a17c5701392796e68d0bc3ed0019299052d40f131e3abdc651c8b90706918fc",
+      "src/semantic/semantic-gate.js": "9de1d7e23687d4cec93c9225907ffc772dc0c30bc140234660a1df6dcdcc0eb7",
+      "src/semantic/clarification-manager.js": "08f6153f1a91f52a1a08a5fec0e23a1abf16105368a2059ffb6a5900e490e1ed",
+      "src/semantic/conversation-reconciler.js": "4b6899a1d99e6b8c3c4334dc652e7f35a28634c3cb4f58f7400dbd4c2131d7c1",
+      "src/semantic/hybrid-semantic-validator.js": "43b4e15814b1297d0c4496199c222fb7b314561317162c8ea9cc39ff5725047c",
+      "src/semantic/targeted-verifier.js": "fa2ddf9ba87df2fe93429da09f64a3c2934f13c90473ff9e5cf5127bc70bdbf8"
+    }
+  },
+  "holdoutSeal": {
+    "dataset": "evaluation/phase-2a-promotion-subject-holdout.js",
+    "datasetSha256": "d6ffafce96f17d213cc760bfa883688f5cde3a8ff96ba54619a4d4d287b3b146",
+    "cases": 12,
+    "firstRealRun": true,
+    "policy": "No production semantic changes after cb078fb; record failures without tuning or rerunning this Holdout."
+  },
+  "executionPlan": {
+    "blindHoldoutCases": 12,
+    "repeatedHighRiskCases": 4,
+    "repeatedRunsPerCase": 3,
+    "totalExecutions": 20
+  },
+  "phase2a4Baseline": {
+    "clarificationTriggerRecall": {
+      "correct": 10,
+      "total": 13,
+      "rate": 0.7692307692307693
+    },
+    "unsupportedAcceptCount": 0,
+    "redFlagSafeRoutingRate": 0.8571428571428571,
+    "gateDriftCases": 0
+  },
+  "safetyMetrics": {
+    "criticalSemanticMissCount": 0,
+    "criticalSemanticMisses": [],
+    "unsupportedAcceptCount": 0,
+    "unsupportedAcceptRate": null,
+    "unsupportedAccepts": [],
+    "redFlagSafeRoutingRate": 1,
+    "redFlags": {
+      "safelyRouted": 17,
+      "total": 17
+    },
+    "uncertaintySafeRoutingRate": 1,
+    "uncertainties": {
+      "safelyRouted": 31,
+      "total": 31
+    },
+    "hallucinationRejectionRate": 1,
+    "hallucinations": {
+      "rejected": 22,
+      "total": 22
+    }
+  },
+  "assertionMetrics": {
+    "metricsVersion": "clinical-assertion-metrics-0.1.0",
+    "evidenceSpanRecall": {
+      "correct": 30,
+      "total": 34,
+      "rate": 0.8823529411764706
+    },
+    "subjectAccuracy": {
+      "correct": 30,
+      "total": 34,
+      "rate": 0.8823529411764706
+    },
+    "negationAccuracy": {
+      "correct": 30,
+      "total": 34,
+      "rate": 0.8823529411764706
+    },
+    "certaintyAccuracy": {
+      "correct": 30,
+      "total": 34,
+      "rate": 0.8823529411764706
+    },
+    "temporalityAccuracy": {
+      "correct": 29,
+      "total": 34,
+      "rate": 0.8529411764705882
+    },
+    "conceptMappingAccuracy": {
+      "correct": 25,
+      "total": 31,
+      "rate": 0.8064516129032258
+    },
+    "clarificationTriggerRecall": {
+      "correct": 31,
+      "total": 31,
+      "rate": 1
+    },
+    "errors": [
+      {
+        "caseId": "P2A-PROMO-SUB-04",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "evidenceSpanRecall",
+        "expected": {
+          "path": "redFlags.pressureOrCrushing",
+          "subject": "unclear",
+          "polarity": "positive",
+          "certainty": "uncertain",
+          "temporality": "current",
+          "quote": false,
+          "hypothetical": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-04",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "subject",
+        "expected": {
+          "path": "redFlags.pressureOrCrushing",
+          "value": "unclear"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-04",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "polarity",
+        "expected": {
+          "path": "redFlags.pressureOrCrushing",
+          "value": "positive"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-04",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "certainty",
+        "expected": {
+          "path": "redFlags.pressureOrCrushing",
+          "value": "uncertain"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-04",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "temporality",
+        "expected": {
+          "path": "redFlags.pressureOrCrushing",
+          "value": "current"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-06",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "conceptMappingAccuracy",
+        "expected": {
+          "path": "redFlags.collapseOrSweating",
+          "value": null,
+          "status": "uncertain",
+          "temporality": "current"
+        },
+        "actual": {
+          "path": "redFlags.collapseOrSweating",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-08",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "conceptMappingAccuracy",
+        "expected": {
+          "path": "chiefComplaint.code",
+          "value": null,
+          "status": "uncertain",
+          "temporality": "current"
+        },
+        "actual": {
+          "path": "chiefComplaint.code",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "new_onset",
+          "contradictionCandidate": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-08",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "conceptMappingAccuracy",
+        "expected": {
+          "path": "symptoms.suddenOnset",
+          "value": null,
+          "status": "uncertain",
+          "temporality": "current"
+        },
+        "actual": {
+          "path": "symptoms.suddenOnset",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "new_onset",
+          "contradictionCandidate": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-08",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "conceptMappingAccuracy",
+        "expected": {
+          "path": "symptoms.onsetPattern",
+          "value": null,
+          "status": "uncertain",
+          "temporality": "current"
+        },
+        "actual": {
+          "path": "symptoms.onsetPattern",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "new_onset",
+          "contradictionCandidate": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "evidenceSpanRecall",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "subject": "unclear",
+          "polarity": "positive",
+          "certainty": "uncertain",
+          "temporality": "current",
+          "quote": false,
+          "hypothetical": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "subject",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "unclear"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "polarity",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "positive"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "certainty",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "uncertain"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "temporality",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "current"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-10",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "temporality",
+        "expected": {
+          "path": "chiefComplaint.code",
+          "value": "current"
+        },
+        "actual": "previous"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-10",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "conceptMappingAccuracy",
+        "expected": {
+          "path": "chiefComplaint.code",
+          "value": null,
+          "status": "uncertain",
+          "temporality": "current"
+        },
+        "actual": {
+          "path": "chiefComplaint.code",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-10",
+        "datasetKind": "blind_holdout",
+        "run": 1,
+        "module": "conceptMappingAccuracy",
+        "expected": {
+          "path": "redFlags.alteredConsciousness",
+          "value": null,
+          "status": "uncertain",
+          "temporality": "current"
+        },
+        "actual": {
+          "path": "redFlags.alteredConsciousness",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "previous",
+          "contradictionCandidate": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 2,
+        "module": "evidenceSpanRecall",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "subject": "unclear",
+          "polarity": "positive",
+          "certainty": "uncertain",
+          "temporality": "current",
+          "quote": false,
+          "hypothetical": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 2,
+        "module": "subject",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "unclear"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 2,
+        "module": "polarity",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "positive"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 2,
+        "module": "certainty",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "uncertain"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 2,
+        "module": "temporality",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "current"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 3,
+        "module": "evidenceSpanRecall",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "subject": "unclear",
+          "polarity": "positive",
+          "certainty": "uncertain",
+          "temporality": "current",
+          "quote": false,
+          "hypothetical": false
+        }
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 3,
+        "module": "subject",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "unclear"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 3,
+        "module": "polarity",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "positive"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 3,
+        "module": "certainty",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "uncertain"
+        },
+        "actual": null
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "datasetKind": "blind_holdout",
+        "run": 3,
+        "module": "temporality",
+        "expected": {
+          "path": "redFlags.worstEverHeadache",
+          "value": "current"
+        },
+        "actual": null
+      }
+    ]
+  },
+  "verifierMetrics": {
+    "accuracy": 0.15789473684210525,
+    "correct": 3,
+    "total": 19,
+    "supportedVerdicts": 3,
+    "supportedWithoutEvidenceAccepted": 0,
+    "errors": [
+      {
+        "caseId": "P2A-PROMO-SUB-03",
+        "run": 1,
+        "path": "redFlags.difficultyBreathing",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-05",
+        "run": 1,
+        "path": "redFlags.painRadiation",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-07",
+        "run": 1,
+        "path": "redFlags.neurologicalDeficit",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-08",
+        "run": 1,
+        "path": "symptoms.suddenOnset",
+        "expected": "UNCERTAIN",
+        "actual": "SUPPORTED"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-08",
+        "run": 1,
+        "path": "symptoms.onsetPattern",
+        "expected": "UNCERTAIN",
+        "actual": "SUPPORTED"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "run": 1,
+        "path": "redFlags.worstEverHeadache",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-11",
+        "run": 1,
+        "path": "redFlags.recentHeadTrauma",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-12",
+        "run": 1,
+        "path": "redFlags.feverNeckStiffness",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-03",
+        "run": 2,
+        "path": "redFlags.difficultyBreathing",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-05",
+        "run": 2,
+        "path": "redFlags.painRadiation",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "run": 2,
+        "path": "redFlags.worstEverHeadache",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-12",
+        "run": 2,
+        "path": "redFlags.feverNeckStiffness",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-03",
+        "run": 3,
+        "path": "redFlags.difficultyBreathing",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-05",
+        "run": 3,
+        "path": "redFlags.painRadiation",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-09",
+        "run": 3,
+        "path": "redFlags.worstEverHeadache",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      },
+      {
+        "caseId": "P2A-PROMO-SUB-12",
+        "run": 3,
+        "path": "redFlags.feverNeckStiffness",
+        "expected": "SUPPORTED",
+        "actual": "UNCERTAIN"
+      }
+    ]
+  },
+  "clinicalSemanticDrift": {
+    "definition": "clinical state transitions on high-risk facts; confidence and JSON ordering ignored",
+    "extractor": {
+      "casesWithDrift": 0,
+      "totalCases": 4,
+      "rate": 0,
+      "caseIds": [],
+      "transitionCounts": {},
+      "events": []
+    },
+    "gate": {
+      "casesWithDrift": 0,
+      "totalCases": 4,
+      "rate": 0,
+      "caseIds": [],
+      "transitionCounts": {},
+      "events": []
+    }
+  },
+  "directResolutionViolations": [],
+  "holdoutResults": {
+    "passedExecutions": 20,
+    "executions": 20,
+    "passRate": 1,
+    "passedCases": 12,
+    "cases": 12,
+    "casePassRate": 1,
+    "failedCaseIds": []
+  },
+  "providerFailureCount": 0,
+  "verifierFailureCount": 0,
+  "criteria": {
+    "subjectAmbiguityNeverDirectlyResolved": true,
+    "clarificationTriggerRecallPerfect": true,
+    "unsupportedAcceptRemainsZero": true,
+    "redFlagSafeRoutingPerfect": true,
+    "gateDriftZero": true,
+    "verifierCannotPromoteWithoutEvidence": true,
+    "providersCompleted": true
+  },
+  "clinicalStatus": "Clinical validation pending",
+  "verdict": "COMPETITION_READY_FOR_PHASE_2B",
+  "records": [
+    {
+      "caseId": "P2A-PROMO-SUB-01",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 9,
+            "end": 12,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "chest_pain_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 9,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 12
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "chest_pain_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 9,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 12
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 12
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-02",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 3,
+            "end": 6,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "chest_pain_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 3,
+                "end": 6
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 3,
+                  "end": 6
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "chest_pain_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 3,
+                "end": 6
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 3,
+                  "end": 6
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 3,
+                  "end": 6
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-03",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 14,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "difficulty_breathing",
+                "factPath": "redFlags.difficultyBreathing"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "difficulty_breathing_candidate",
+            "conceptId": "difficulty_breathing",
+            "factPath": "redFlags.difficultyBreathing",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.difficultyBreathing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "difficulty_breathing"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.difficultyBreathing",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.difficultyBreathing",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.difficultyBreathing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.difficultyBreathing",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.difficultyBreathing",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，呼吸困难的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，呼吸困难的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，呼吸困难的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-04",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.pressureOrCrushing",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 12,
+            "end": 15,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "pressure_or_crushing",
+                "factPath": "redFlags.pressureOrCrushing"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 12,
+                "end": 15
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "pressure_or_crushing_candidate",
+            "conceptId": "pressure_or_crushing",
+            "factPath": "redFlags.pressureOrCrushing",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 12,
+                "end": 15
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.pressureOrCrushing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 12,
+                  "end": 15
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "pressure_or_crushing"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.pressureOrCrushing",
+            "evidence": [
+              {
+                "start": 12,
+                "end": 15
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.pressureOrCrushing",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.pressureOrCrushing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 12,
+                  "end": 15
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "SUPPORTED",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.pressureOrCrushing",
+              "evidence": [
+                {
+                  "start": 12,
+                  "end": 15
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.pressureOrCrushing",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸口压迫或紧缩不适的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸口压迫或紧缩不适的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "REJECT",
+            "reasonCodes": [
+              "KNOWN_FACT_WITHOUT_SOURCE_EVIDENCE"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": "chest_pain",
+              "status": "known",
+              "confidence": 0.9,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "llm",
+            "assertion": null,
+            "evidenceMethod": "none",
+            "evidenceCount": 0,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": null,
+            "clarification": null,
+            "shadowFollowUpProposal": null
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 1
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸口压迫或紧缩不适的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-05",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.painRadiation",
+          "value": true,
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 5,
+            "end": 7,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "chest_pain_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 6,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "pain_radiation",
+                "factPath": "redFlags.painRadiation"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "pain_radiation_candidate",
+            "conceptId": "pain_radiation",
+            "factPath": "redFlags.painRadiation",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "chest_pain_complaint"
+            ]
+          },
+          {
+            "fact": {
+              "path": "redFlags.painRadiation",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "pain_radiation"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.painRadiation",
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "redFlags.painRadiation",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.painRadiation",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.painRadiation",
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.painRadiation",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？",
+          "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-06",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 7,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "collapse_or_sweating",
+                "factPath": "redFlags.collapseOrSweating"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "previous",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 7,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "collapse_or_sweating_candidate",
+            "conceptId": "collapse_or_sweating",
+            "factPath": "redFlags.collapseOrSweating",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 7,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.collapseOrSweating",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "previous",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "previous",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 7,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "collapse_or_sweating"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.collapseOrSweating",
+            "evidence": [
+              {
+                "start": 7,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.collapseOrSweating",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.collapseOrSweating",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "previous",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "previous",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 7,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.collapseOrSweating",
+              "evidence": [
+                {
+                  "start": 7,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.collapseOrSweating",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，晕倒或出冷汗的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，晕倒或出冷汗的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，晕倒或出冷汗的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-07",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "invalid",
+      "errorCode": "EXTRACTION_SCHEMA_VIOLATION",
+      "modelSnapshot": null,
+      "candidateFacts": [],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 9,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 12,
+            "end": 16,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "neurological_deficit",
+                "factPath": "redFlags.neurologicalDeficit"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 9,
+                "end": 11
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 12,
+                "end": 16
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "neurological_deficit_candidate",
+            "conceptId": "neurological_deficit",
+            "factPath": "redFlags.neurologicalDeficit",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 12,
+                "end": 16
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          },
+          {
+            "fact": {
+              "path": "redFlags.neurologicalDeficit",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 12,
+                  "end": 16
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "neurological_deficit"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 9,
+                "end": 11
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.neurologicalDeficit",
+            "evidence": [
+              {
+                "start": 12,
+                "end": 16
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "redFlags.neurologicalDeficit",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.neurologicalDeficit",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 12,
+                  "end": 16
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.neurologicalDeficit",
+              "evidence": [
+                {
+                  "start": 12,
+                  "end": 16
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.neurologicalDeficit",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，肢体无力、麻木、嘴歪或说话不清的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，肢体无力、麻木、嘴歪或说话不清的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？",
+          "请确认，肢体无力、麻木、嘴歪或说话不清的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-08",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 8,
+            "end": 10,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "sudden_onset",
+                "factPath": "symptoms.suddenOnset"
+              },
+              {
+                "conceptId": "sudden_severe_onset",
+                "factPath": "symptoms.onsetPattern"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 10,
+            "end": 12,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "new_onset",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 10
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "new_onset",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "sudden_onset_candidate",
+            "conceptId": "sudden_onset",
+            "factPath": "symptoms.suddenOnset",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 10
+              }
+            ]
+          },
+          {
+            "signal": "sudden_severe_onset_candidate",
+            "conceptId": "sudden_severe_onset",
+            "factPath": "symptoms.onsetPattern",
+            "proposedValue": "sudden_severe",
+            "evidence": [
+              {
+                "start": 8,
+                "end": 10
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "symptoms.suddenOnset",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "new_onset",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "new_onset",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 8,
+                  "end": 10
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "sudden_onset"
+            ]
+          },
+          {
+            "fact": {
+              "path": "symptoms.onsetPattern",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "new_onset",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "new_onset",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 8,
+                  "end": 10
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "sudden_severe_onset"
+            ]
+          },
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "new_onset",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "new_onset",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 12
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "symptoms.suddenOnset",
+            "evidence": [
+              {
+                "start": 8,
+                "end": 10
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "symptoms.onsetPattern",
+            "evidence": [
+              {
+                "start": 8,
+                "end": 10
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "symptoms.suddenOnset",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "symptoms.suddenOnset",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "new_onset",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "new_onset",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 8,
+                  "end": 10
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "SUPPORTED",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "symptoms.suddenOnset",
+              "evidence": [
+                {
+                  "start": 8,
+                  "end": 10
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "symptoms.suddenOnset",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，突然头痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，突然头痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "symptoms.onsetPattern",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "symptoms.onsetPattern",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "new_onset",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "new_onset",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 8,
+                  "end": 10
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "SUPPORTED",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "symptoms.onsetPattern",
+              "evidence": [
+                {
+                  "start": 8,
+                  "end": 10
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "symptoms.onsetPattern",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，这项症状的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，这项症状的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "new_onset",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "new_onset",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 12
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 12
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 3,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，突然头痛的是您本人还是您提到的其他人？",
+          "请确认，这项症状的是您本人还是您提到的其他人？",
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-09",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.worstEverHeadache",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 17,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "worst_ever_headache",
+                "factPath": "redFlags.worstEverHeadache"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 18,
+            "end": 20,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 18,
+                "end": 20
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "worst_ever_headache_candidate",
+            "conceptId": "worst_ever_headache",
+            "factPath": "redFlags.worstEverHeadache",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.worstEverHeadache",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "worst_ever_headache"
+            ]
+          },
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.worstEverHeadache",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 18,
+                "end": 20
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.worstEverHeadache",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.worstEverHeadache",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.worstEverHeadache",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.worstEverHeadache",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？",
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-10",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.alteredConsciousness",
+          "value": true,
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 6,
+            "end": 8,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 9,
+            "end": 12,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "altered_consciousness",
+                "factPath": "redFlags.alteredConsciousness"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "previous",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 8
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "previous",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 9,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "altered_consciousness_candidate",
+            "conceptId": "altered_consciousness",
+            "factPath": "redFlags.alteredConsciousness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 9,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "previous",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "previous",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 8
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          },
+          {
+            "fact": {
+              "path": "redFlags.alteredConsciousness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "previous",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "previous",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 12
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "altered_consciousness"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 6,
+                "end": 8
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.alteredConsciousness",
+            "evidence": [
+              {
+                "start": 9,
+                "end": 12
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "previous",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "previous",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 8
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 8
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "redFlags.alteredConsciousness",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.alteredConsciousness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "previous",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "previous",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 12
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.alteredConsciousness",
+              "evidence": [
+                {
+                  "start": 9,
+                  "end": 12
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.alteredConsciousness",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，意识异常的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，意识异常的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？",
+          "请确认，意识异常的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-11",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.recentHeadTrauma",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 13,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "recent_head_trauma",
+                "factPath": "redFlags.recentHeadTrauma"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 14,
+            "end": 16,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 13
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 14,
+                "end": 16
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "recent_head_trauma_candidate",
+            "conceptId": "recent_head_trauma",
+            "factPath": "redFlags.recentHeadTrauma",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 13
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.recentHeadTrauma",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 13
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "recent_head_trauma"
+            ]
+          },
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 14,
+                  "end": 16
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.recentHeadTrauma",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 13
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 14,
+                "end": 16
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.recentHeadTrauma",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.recentHeadTrauma",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 13
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.recentHeadTrauma",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 13
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.recentHeadTrauma",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，近期头部外伤的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，近期头部外伤的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 14,
+                  "end": 16
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 14,
+                  "end": 16
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，近期头部外伤的是您本人还是您提到的其他人？",
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-12",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 1,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.feverNeckStiffness",
+          "value": true,
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 5,
+            "end": 7,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "fever",
+                "factPath": "redFlags.feverNeckStiffness"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 8,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "neck_stiffness",
+                "factPath": "redFlags.feverNeckStiffness"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "fever_candidate",
+            "conceptId": "fever",
+            "factPath": "redFlags.feverNeckStiffness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "signal": "neck_stiffness_candidate",
+            "conceptId": "neck_stiffness",
+            "factPath": "redFlags.feverNeckStiffness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.feverNeckStiffness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1+assertion-span-2",
+              "spanId": "span-1+span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 2,
+            "conceptIds": [
+              "fever",
+              "neck_stiffness"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.feverNeckStiffness",
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              },
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.feverNeckStiffness",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.feverNeckStiffness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1+assertion-span-2",
+              "spanId": "span-1+span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 2,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.feverNeckStiffness",
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.feverNeckStiffness",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-03",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 14,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "difficulty_breathing",
+                "factPath": "redFlags.difficultyBreathing"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "difficulty_breathing_candidate",
+            "conceptId": "difficulty_breathing",
+            "factPath": "redFlags.difficultyBreathing",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.difficultyBreathing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "difficulty_breathing"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.difficultyBreathing",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.difficultyBreathing",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.difficultyBreathing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.difficultyBreathing",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.difficultyBreathing",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，呼吸困难的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，呼吸困难的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，呼吸困难的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-05",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.painRadiation",
+          "value": true,
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 5,
+            "end": 7,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "chest_pain_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 6,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "pain_radiation",
+                "factPath": "redFlags.painRadiation"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "pain_radiation_candidate",
+            "conceptId": "pain_radiation",
+            "factPath": "redFlags.painRadiation",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "chest_pain_complaint"
+            ]
+          },
+          {
+            "fact": {
+              "path": "redFlags.painRadiation",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "pain_radiation"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.painRadiation",
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "redFlags.painRadiation",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.painRadiation",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.painRadiation",
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.painRadiation",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？",
+          "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-09",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.worstEverHeadache",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 17,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "worst_ever_headache",
+                "factPath": "redFlags.worstEverHeadache"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 18,
+            "end": 20,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 18,
+                "end": 20
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "worst_ever_headache_candidate",
+            "conceptId": "worst_ever_headache",
+            "factPath": "redFlags.worstEverHeadache",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.worstEverHeadache",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "worst_ever_headache"
+            ]
+          },
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.worstEverHeadache",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 18,
+                "end": 20
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.worstEverHeadache",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.worstEverHeadache",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.worstEverHeadache",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.worstEverHeadache",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？",
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-12",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 2,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.feverNeckStiffness",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 5,
+            "end": 7,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "fever",
+                "factPath": "redFlags.feverNeckStiffness"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 8,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "neck_stiffness",
+                "factPath": "redFlags.feverNeckStiffness"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "fever_candidate",
+            "conceptId": "fever",
+            "factPath": "redFlags.feverNeckStiffness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "signal": "neck_stiffness_candidate",
+            "conceptId": "neck_stiffness",
+            "factPath": "redFlags.feverNeckStiffness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.feverNeckStiffness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1+assertion-span-2",
+              "spanId": "span-1+span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 2,
+            "conceptIds": [
+              "fever",
+              "neck_stiffness"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.feverNeckStiffness",
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              },
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.feverNeckStiffness",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.feverNeckStiffness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1+assertion-span-2",
+              "spanId": "span-1+span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 2,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.feverNeckStiffness",
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.feverNeckStiffness",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-03",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 3,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.difficultyBreathing",
+          "value": null,
+          "status": "uncertain",
+          "confidence": 0.5,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 14,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "difficulty_breathing",
+                "factPath": "redFlags.difficultyBreathing"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "difficulty_breathing_candidate",
+            "conceptId": "difficulty_breathing",
+            "factPath": "redFlags.difficultyBreathing",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.difficultyBreathing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "difficulty_breathing"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.difficultyBreathing",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 14
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.difficultyBreathing",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.difficultyBreathing",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.difficultyBreathing",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 14
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.difficultyBreathing",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，呼吸困难的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，呼吸困难的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，呼吸困难的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-05",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "CHEST_PAIN_V1",
+      "run": 3,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "chest_pain",
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.painRadiation",
+          "value": true,
+          "status": "known",
+          "confidence": 0.7,
+          "temporality": "unspecified",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "CHEST_PAIN_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 5,
+            "end": 7,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "chest_pain_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 6,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "pain_radiation",
+                "factPath": "redFlags.painRadiation"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "pain_radiation_candidate",
+            "conceptId": "pain_radiation",
+            "factPath": "redFlags.painRadiation",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "chest_pain_complaint"
+            ]
+          },
+          {
+            "fact": {
+              "path": "redFlags.painRadiation",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "pain_radiation"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.painRadiation",
+            "evidence": [
+              {
+                "start": 6,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "redFlags.painRadiation",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.painRadiation",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.painRadiation",
+              "evidence": [
+                {
+                  "start": 6,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.painRadiation",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，胸痛的是您本人还是您提到的其他人？",
+          "请确认，胸痛向其他部位放射的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-09",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 3,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "chiefComplaint.code",
+          "value": "headache",
+          "status": "known",
+          "confidence": 0.9,
+          "temporality": "current",
+          "contradictionCandidate": false
+        },
+        {
+          "path": "redFlags.worstEverHeadache",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 10,
+            "end": 17,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "worst_ever_headache",
+                "factPath": "redFlags.worstEverHeadache"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 18,
+            "end": 20,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "headache_complaint",
+                "factPath": "chiefComplaint.code"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 18,
+                "end": 20
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "worst_ever_headache_candidate",
+            "conceptId": "worst_ever_headache",
+            "factPath": "redFlags.worstEverHeadache",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.worstEverHeadache",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "worst_ever_headache"
+            ]
+          },
+          {
+            "fact": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "evidenceCount": 1,
+            "conceptIds": [
+              "headache_complaint"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.worstEverHeadache",
+            "evidence": [
+              {
+                "start": 10,
+                "end": 17
+              }
+            ]
+          },
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "chiefComplaint.code",
+            "evidence": [
+              {
+                "start": 18,
+                "end": 20
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.worstEverHeadache",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.worstEverHeadache",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1",
+              "spanId": "span-1",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.worstEverHeadache",
+              "evidence": [
+                {
+                  "start": 10,
+                  "end": 17
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.worstEverHeadache",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？"
+          },
+          {
+            "factPath": "chiefComplaint.code",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "chiefComplaint.code",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-2",
+              "spanId": "span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 1,
+            "verifierStatus": null,
+            "verifierVerdict": null,
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "chiefComplaint.code",
+              "evidence": [
+                {
+                  "start": 18,
+                  "end": 20
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "chiefComplaint.code",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，胸痛的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，胸痛的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 2,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，有生以来最严重的头痛的是您本人还是您提到的其他人？",
+          "请确认，胸痛的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    },
+    {
+      "caseId": "P2A-PROMO-SUB-12",
+      "datasetKind": "blind_holdout",
+      "category": "subject_ambiguity",
+      "pathway": "HEADACHE_V1",
+      "run": 3,
+      "extractionStatus": "completed",
+      "validationStatus": "valid",
+      "errorCode": null,
+      "modelSnapshot": "deepseek-v4-flash",
+      "candidateFacts": [
+        {
+          "path": "redFlags.feverNeckStiffness",
+          "value": true,
+          "status": "known",
+          "confidence": 0.8,
+          "temporality": "current",
+          "contradictionCandidate": false
+        }
+      ],
+      "hybrid": {
+        "validatorVersion": "hybrid-semantic-validator-0.2.0",
+        "mode": "shadow",
+        "pathway": "HEADACHE_V1",
+        "evidenceSpans": [
+          {
+            "spanId": "span-1",
+            "start": 5,
+            "end": 7,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "fever",
+                "factPath": "redFlags.feverNeckStiffness"
+              }
+            ]
+          },
+          {
+            "spanId": "span-2",
+            "start": 8,
+            "end": 11,
+            "exact": true,
+            "conceptHints": [
+              {
+                "conceptId": "neck_stiffness",
+                "factPath": "redFlags.feverNeckStiffness"
+              }
+            ]
+          }
+        ],
+        "linguisticAssertions": [
+          {
+            "assertionId": "assertion-span-1",
+            "spanId": "span-1",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "assertionId": "assertion-span-2",
+            "spanId": "span-2",
+            "evidenceExact": true,
+            "subject": "unclear",
+            "polarity": "positive",
+            "certainty": "uncertain",
+            "temporality": "current",
+            "quote": false,
+            "hypothetical": false,
+            "explicitCorrection": false,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "detectorVersion": "safety-signal-detector-0.2.0",
+        "detectorCandidates": [
+          {
+            "signal": "fever_candidate",
+            "conceptId": "fever",
+            "factPath": "redFlags.feverNeckStiffness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              }
+            ]
+          },
+          {
+            "signal": "neck_stiffness_candidate",
+            "conceptId": "neck_stiffness",
+            "factPath": "redFlags.feverNeckStiffness",
+            "proposedValue": true,
+            "evidence": [
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "mappedFacts": [
+          {
+            "fact": {
+              "path": "redFlags.feverNeckStiffness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "assertion": {
+              "assertionId": "assertion-span-1+assertion-span-2",
+              "spanId": "span-1+span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceCount": 2,
+            "conceptIds": [
+              "fever",
+              "neck_stiffness"
+            ]
+          }
+        ],
+        "reconciliations": [
+          {
+            "reconcilerVersion": "conversation-reconciler-0.1.0",
+            "status": "NO_CONFLICT",
+            "contextConflict": false,
+            "correctionApplied": false,
+            "previousFact": null,
+            "currentFactPath": "redFlags.feverNeckStiffness",
+            "evidence": [
+              {
+                "start": 5,
+                "end": 7
+              },
+              {
+                "start": 8,
+                "end": 11
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "factPath": "redFlags.feverNeckStiffness",
+            "decision": "UNCERTAIN",
+            "reasonCodes": [
+              "SUBJECT_UNCLEAR"
+            ],
+            "candidate": {
+              "path": "redFlags.feverNeckStiffness",
+              "value": null,
+              "status": "uncertain",
+              "confidence": 0.5,
+              "temporality": "current",
+              "contradictionCandidate": false
+            },
+            "candidateSource": "evidence_pipeline+llm",
+            "assertion": {
+              "assertionId": "assertion-span-1+assertion-span-2",
+              "spanId": "span-1+span-2",
+              "evidenceExact": true,
+              "subject": "unclear",
+              "polarity": "positive",
+              "certainty": "uncertain",
+              "temporality": "current",
+              "quote": false,
+              "hypothetical": false,
+              "explicitCorrection": false,
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "evidenceMethod": "evidence_span",
+            "evidenceCount": 2,
+            "verifierStatus": "completed",
+            "verifierVerdict": "UNCERTAIN",
+            "verifierErrorCode": null,
+            "reconciliation": {
+              "reconcilerVersion": "conversation-reconciler-0.1.0",
+              "status": "NO_CONFLICT",
+              "contextConflict": false,
+              "correctionApplied": false,
+              "previousFact": null,
+              "currentFactPath": "redFlags.feverNeckStiffness",
+              "evidence": [
+                {
+                  "start": 5,
+                  "end": 7
+                },
+                {
+                  "start": 8,
+                  "end": 11
+                }
+              ]
+            },
+            "clarification": {
+              "factPath": "redFlags.feverNeckStiffness",
+              "reasonCodes": [
+                "SUBJECT_UNCERTAIN",
+                "CERTAINTY_UNCLEAR"
+              ],
+              "question": "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+            },
+            "shadowFollowUpProposal": "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+          }
+        ],
+        "summary": {
+          "ACCEPT": 0,
+          "UNCERTAIN": 1,
+          "REJECT": 0
+        },
+        "shadowFollowUpProposals": [
+          "请确认，发热伴脖子僵硬的是您本人还是您提到的其他人？"
+        ],
+        "clinicalStatus": "Clinical validation pending"
+      }
+    }
+  ]
+}

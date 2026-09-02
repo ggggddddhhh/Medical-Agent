@@ -48,6 +48,52 @@ test("promotion production freeze and Subject Blind Holdout match their pre-run 
   assert.equal(phase2aPromotionHoldoutSeal.firstRealRun, true);
 });
 
+test("sealed promotion result preserves the measured readiness criteria", () => {
+  const result = JSON.parse(readFileSync(
+    new URL("../evaluation/results/deepseek-v4-flash-phase-2a-promotion.json", import.meta.url),
+    "utf8",
+  ));
+  assert.deepEqual(result.productionFreeze, phase2aPromotionProductionFreeze);
+  assert.deepEqual(result.holdoutSeal, phase2aPromotionHoldoutSeal);
+  assert.equal(result.executionPlan.blindHoldoutCases, 12);
+  assert.equal(result.executionPlan.totalExecutions, 20);
+  assert.equal(result.safetyMetrics.unsupportedAcceptCount, 0);
+  assert.equal(result.safetyMetrics.redFlagSafeRoutingRate, 1);
+  assert.equal(result.assertionMetrics.clarificationTriggerRecall.rate, 1);
+  assert.equal(result.clinicalSemanticDrift.gate.casesWithDrift, 0);
+  assert.deepEqual(result.directResolutionViolations, []);
+  assert.ok(Object.values(result.criteria).every(Boolean));
+  assert.equal(result.verdict, "COMPETITION_READY_FOR_PHASE_2B");
+});
+
+test("promotion report records the finite scope, metrics and remaining limitations", () => {
+  const report = readFileSync(
+    new URL("../docs/phase-2a-subject-promotion.md", import.meta.url),
+    "utf8",
+  );
+  for (const required of [
+    "COMPETITION_READY_FOR_PHASE_2B",
+    "31/31（100%）",
+    "17/17（100%）",
+    "Unsupported ACCEPT",
+    "Gate Drift",
+    "Phase 1 Safety Invariants：10/10 通过",
+    "231/231 通过",
+    "最大的三个剩余问题",
+    "Clinical validation pending",
+  ]) assert.match(report, new RegExp(required));
+});
+
+test("sealed promotion result contains no raw input, prompt, reasoning or credential", () => {
+  const result = readFileSync(
+    new URL("../evaluation/results/deepseek-v4-flash-phase-2a-promotion.json", import.meta.url),
+    "utf8",
+  );
+  assert.doesNotMatch(result, /"input"\s*:/);
+  assert.doesNotMatch(result, /DEEPSEEK_API_KEY|api[_-]?key|authorization|bearer\s/i);
+  assert.doesNotMatch(result, /"prompt"\s*:|"reasoning"\s*:/i);
+});
+
 function normalize(input) {
   return input.replace(/\s+/g, "").replace(/[，。？！、“”‘’—-]/g, "").toLowerCase();
 }
