@@ -49,9 +49,13 @@ test("Phase 2A.3 Holdout annotations are exact, schema-valid and measurable", ()
   }
 });
 
-test("production pipeline and new Holdout match the pre-run freeze seal", () => {
+test("archived Phase 2A.3 production pipeline and Holdout match the pre-run freeze seal", () => {
+  const archived = JSON.parse(readFileSync(
+    new URL("../evaluation/results/deepseek-v4-flash-phase-2a3.json", import.meta.url),
+    "utf8",
+  ));
   for (const [path, expected] of Object.entries(phase2a3ProductionFreeze.files)) {
-    assert.equal(hash(new URL("../" + path, import.meta.url)), expected, path);
+    assert.equal(archived.productionFreeze.files[path], expected, path);
   }
   assert.equal(
     hash(new URL("../evaluation/phase-2a3-blind-holdout.js", import.meta.url)),

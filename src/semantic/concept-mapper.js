@@ -1,6 +1,6 @@
 import { isHighRiskSemanticPath } from "./safety-signal-detector.js";
 
-export const CONCEPT_MAPPER_VERSION = "concept-mapper-0.1.0";
+export const CONCEPT_MAPPER_VERSION = "concept-mapper-0.2.0";
 
 export class ConceptMapper {
   map({ assertions, detectorCandidates = [], protocol }) {
@@ -18,6 +18,7 @@ export class ConceptMapper {
       for (const hint of assertion.conceptHints ?? []) {
         if (!protocol.semanticFactSchema[hint.factPath]) continue;
         if (hint.factPath === "chiefComplaint.code" && assertion.explicitCorrection) continue;
+        if (assertion.polarity === "negative" && typeof hint.proposedValue !== "boolean") continue;
         const evidence = assertion.evidence[0];
         if (
           isHighRiskSemanticPath(hint.factPath) &&

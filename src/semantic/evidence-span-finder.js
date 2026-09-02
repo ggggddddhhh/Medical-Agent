@@ -3,7 +3,7 @@ import {
   clinicalEvidenceEntries,
 } from "./clinical-evidence-lexicon.js";
 
-export const EVIDENCE_SPAN_FINDER_VERSION = "evidence-span-finder-0.1.0";
+export const EVIDENCE_SPAN_FINDER_VERSION = "evidence-span-finder-0.2.0";
 
 export class EvidenceSpanFinder {
   find({ message, protocol }) {
