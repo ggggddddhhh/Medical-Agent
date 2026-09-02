@@ -1,6 +1,6 @@
 import { verifyEvidenceSpan } from "./evidence-span-finder.js";
 
-export const LINGUISTIC_ASSERTION_LAYER_VERSION = "linguistic-assertion-layer-0.2.0";
+export const LINGUISTIC_ASSERTION_LAYER_VERSION = "linguistic-assertion-layer-0.3.0";
 
 const CORRECTION = /更正|纠正|说错了|说错|改口|重新想了想|重新想想|记错了|记错|其实|准确地说/;
 const CERTAIN = /确实|真的|肯定|其实|明确|就是/;
@@ -8,7 +8,9 @@ const UNCERTAIN = /好像|可能|也许|似乎|不太确定|不确定|说不准|
 const HYPOTHETICAL = /如果|假如|要是|万一|假设|倘若/;
 const SOURCE = /网上|文章|资料|举例|例如|比如|听说|写着|别人说|医生问/;
 const OTHER_PERSON = /我朋友|朋友|我家人|家里人|家属|我爱人|爱人|同事|同学|室友|邻居|父亲|母亲|爸爸|妈妈|爸|妈|丈夫|妻子|老公|老婆|孩子|儿子|女儿|别人|患者|他|她/;
-const SUBJECT_UNCLEAR = /不清楚(?:是)?谁|不知道(?:是)?谁|分不清(?:是)?谁|是我还是|本人还是|谁的症状.{0,6}(?:不清楚|不知道)/;
+const SUBJECT_UNCLEAR = /不清楚(?:是)?谁|不知道(?:是)?谁|分不清(?:是)?谁|是我还是|本人还是|谁的症状.{0,6}(?:不清楚|不知道)|(?:不知道|不清楚|说不准|搞不清|分不清|无法确认).{0,10}(?:是)?(?:我|自己|本人).{0,6}(?:还是|或是|或者).{0,8}(?:朋友|家人|家属|爱人|同事|同学|室友|邻居|父亲|母亲|爸爸|妈妈|丈夫|妻子|孩子|别人|他|她)|(?:我|自己|本人).{0,6}(?:还是|或是|或者).{0,8}(?:朋友|家人|家属|爱人|同事|同学|室友|邻居|父亲|母亲|爸爸|妈妈|丈夫|妻子|孩子|别人|他|她)|(?:没|未)(?:有)?(?:说|讲|写)?清(?:楚|白)?.{0,8}(?:是谁|哪(?:一|个)?人|主体)/;
+const SHARED_SUBJECT_UNCLEAR = /(?:我|本人|自己).{0,5}(?:和|跟|与).{0,5}(?:朋友|家人|家属|爱人|同事|同学|室友|邻居|父亲|母亲|爸爸|妈妈|丈夫|妻子|孩子).{0,10}(?:有一个|其中一个|有人)/;
+const MIXED_SELF_OTHER = /(?:朋友|家人|家属|爱人|同事|同学|室友|邻居|父亲|母亲|爸爸|妈妈|丈夫|妻子|孩子|他|她).{0,24}(?:我也|我自己也|而我|同时我|我这边).{0,12}(?:不舒服|难受|不对劲|类似|这样|胸|心口|头|脑袋|喘|呼吸|疼|痛|麻|晕|无力|没劲)/;
 const NEGATION = /没有|并无|无明显|否认|不伴|从未|(?<!是)不是|并非|没(?:有)?|不(?:会|曾|再|伴|往|向|硬|疼|痛)/;
 const STRONG_PAST = /大前天|前天|昨天|昨晚|上周|上星期|上个月|去年|前年|以前|曾经|之前|早些时候|当时|那次|过去|(?:\d+|一|两|三|四|五|六|七|八|九|十|半)(?:分钟|小时|天|周|个月|年)前|今早|早上|上午|中午|下午|夜里|凌晨|那会儿|那阵子/;
 const RECENT_PAST = /刚才|刚刚/;
@@ -34,17 +36,24 @@ function classify(message, span) {
   const nearby = message.slice(Math.max(0, span.start - 24), Math.min(message.length, span.end + 24));
   const directAnswer = /医生问.{0,30}我.{0,20}(?:回答|说).{0,12}(?:都没有|没有|没)/.test(message);
   const patientObservedByOther = /(?:家人|朋友|同事|同学|室友|爱人).{0,10}(?:说|看见|看到|发现).{0,20}(?:我|本人|叫不醒我)/.test(nearby);
+  const subjectUnclear = isSubjectUnclear(message, clause.text, nearby);
   const rawQuote = !directAnswer && !patientObservedByOther &&
     (insideQuotes(message, span) || SOURCE.test(clause.text));
   const referentialDenial = rawQuote && span.conceptHints.some((hint) =>
     hint.factPath.startsWith("redFlags."))
     ? patientDenialAfter(message, span.end)
     : null;
-  const quote = rawQuote && !referentialDenial;
+  const quote = rawQuote && !referentialDenial && !subjectUnclear;
   const hypothetical = HYPOTHETICAL.test(clause.prefix) || HYPOTHETICAL.test(nearby);
   const subject = referentialDenial
     ? "patient"
-    : classifySubject(clause, nearby, { directAnswer, patientObservedByOther, quote, hypothetical });
+    : classifySubject(clause, nearby, {
+        directAnswer,
+        patientObservedByOther,
+        quote,
+        hypothetical,
+        subjectUnclear,
+      });
   const polarity = referentialDenial
     ? "negative"
     : classifyPolarity(message, span, clause, { directAnswer });
@@ -75,11 +84,20 @@ function classify(message, span) {
 
 function classifySubject(clause, nearby, flags) {
   if (flags.directAnswer || flags.patientObservedByOther) return "patient";
-  if (SUBJECT_UNCLEAR.test(clause.text) || SUBJECT_UNCLEAR.test(nearby)) return "unclear";
+  if (flags.subjectUnclear) return "unclear";
   if (OTHER_PERSON.test(clause.prefix) || OTHER_PERSON.test(nearby)) return "other";
   if (flags.hypothetical && /有人|他|她|别人/.test(nearby)) return "other";
   if (/我|本人|自己/.test(clause.text) || !flags.quote) return "patient";
   return "unclear";
+}
+
+function isSubjectUnclear(message, clause, nearby) {
+  return SUBJECT_UNCLEAR.test(clause) ||
+    SUBJECT_UNCLEAR.test(nearby) ||
+    SUBJECT_UNCLEAR.test(message) ||
+    SHARED_SUBJECT_UNCLEAR.test(nearby) ||
+    SHARED_SUBJECT_UNCLEAR.test(message) ||
+    MIXED_SELF_OTHER.test(message);
 }
 
 function classifyPolarity(message, span, clause, { directAnswer }) {

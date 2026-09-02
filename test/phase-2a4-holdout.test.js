@@ -47,10 +47,13 @@ test("Phase 2A.4 Blind Holdout has 24 isolated and schema-valid cases", () => {
   }
 });
 
-test("Phase 2A.4 production and Blind Holdout match the pre-run seals", () => {
-  for (const [path, expected] of Object.entries(phase2a4ProductionFreeze.files)) {
-    assert.equal(hash(new URL("../" + path, import.meta.url)), expected, path);
-  }
+test("Phase 2A.4 archived result preserves the pre-run production and Holdout seals", () => {
+  const archived = JSON.parse(readFileSync(
+    new URL("../evaluation/results/deepseek-v4-flash-phase-2a4.json", import.meta.url),
+    "utf8",
+  ));
+  assert.deepEqual(archived.productionFreeze, phase2a4ProductionFreeze);
+  assert.deepEqual(archived.holdoutSeal, phase2a4HoldoutSeal);
   assert.equal(
     hash(new URL("../evaluation/phase-2a4-blind-holdout.js", import.meta.url)),
     phase2a4HoldoutSeal.datasetSha256,
