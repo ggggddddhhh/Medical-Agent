@@ -11,7 +11,8 @@
     "eval:deepseek:phase2a1": "node scripts/run-phase-2a1-deepseek-evaluation.js",
     "eval:deepseek:phase2a2": "node scripts/run-phase-2a2-deepseek-evaluation.js",
     "eval:deepseek:phase2a3": "node scripts/run-phase-2a3-deepseek-evaluation.js",
-    "eval:deepseek:phase2a4": "node scripts/run-phase-2a4-deepseek-evaluation.js"
+    "eval:deepseek:phase2a4": "node scripts/run-phase-2a4-deepseek-evaluation.js",
+    "eval:deepseek:phase2a-promotion": "node scripts/run-phase-2a-promotion-evaluation.js"
   },
   "engines": {
     "node": ">=22"
