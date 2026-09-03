@@ -134,6 +134,26 @@ export {
   AGENT_API_VERSION,
   createAgentApiServer,
 } from "./phase2b/agent-api-server.js";
+export {
+  RESPONSE_FIELDS,
+  RESPONSE_GENERATOR_VERSION,
+  ResponseGenerator,
+  createCanonicalUserResponse,
+} from "./phase2c/response-generator.js";
+export {
+  RESPONSE_SAFETY_GUARD_VERSION,
+  ResponseSafetyError,
+  ResponseSafetyGuard,
+} from "./phase2c/response-safety-guard.js";
+export {
+  KNOWLEDGE_SUPPORT_BOUNDARY_VERSION,
+  FUTURE_LIGHTRAG_BOUNDARY,
+} from "./phase2c/knowledge-support-boundary.js";
+export {
+  RESPONSE_LAYER_VERSION,
+  ResponseLayerAgent,
+} from "./phase2c/response-layer-agent.js";
+export { createPhase2CAgentLoop } from "./phase2c/create-phase2c-agent.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
 export {
   evaluateRealModel,

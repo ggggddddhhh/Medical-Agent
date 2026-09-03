@@ -1,5 +1,7 @@
 node_modules/
 coverage/
+__pycache__/
+*.py[cod]
 *.log
 .env
 .env.*

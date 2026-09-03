@@ -74,3 +74,9 @@ Phase 2A 已完成 Evidence-Grounded Assertion Pipeline、语义鲁棒性与独�
 - [Phase 2B Architecture and API](docs/phase-2b-multi-turn-agent-loop.md)
 
 Phase 2B 在未修改 Safety Core、Semantic Gate、CaseState 和 Clinical Pathway 的前提下增加多轮编排与 REST 边界。Node.js 仍是状态和安全决策权威；Python AI Service 只负责模型调用，为后续 RAG、Embedding 和 Retriever 预留独立服务边界，本阶段尚未加入这些功能。
+
+## Phase 2C Response Layer
+
+- [Phase 2C Architecture and Safety Contract](docs/phase-2c-response-layer.md)
+
+Phase 2C 以只读包装器把现有结构化决策转换为固定的用户响应字段，并再次经过响应安全门。风险等级、处置、原因码、CaseState 和 Decision Trace 仍由原 Node.js Core 独占；本阶段没有接入 RAG，也没有让生成层新增医学事实或修改风险结论。
