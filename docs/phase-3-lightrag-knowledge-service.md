@@ -48,6 +48,7 @@ LightRAG 查询采用 `only_need_context=True`。系统不使用 LightRAG 生成
 python_knowledge_service/
   app.py                  REST 服务、请求验证和安全错误响应
   catalog.py              审核知识目录加载、验证和材料化
+  embedding_provider.py   OpenAI-compatible BGE-M3 适配器与响应校验
   lightrag_backend.py      LightRAG 适配器与 context-only 查询
   knowledge_base.json     小规模审核语料
   requirements.txt        lightrag-hku==1.5.7
@@ -89,9 +90,9 @@ Embedding 固定为：
 
 ```json
 {
-  "serviceVersion": "python-lightrag-knowledge-service-0.1.0",
+  "serviceVersion": "python-lightrag-knowledge-service-0.2.0",
   "status": "available",
-  "corpusVersion": "medical-education-mini-corpus-0.1.0",
+  "corpusVersion": "medical-education-mini-corpus-0.2.0",
   "items": [
     {
       "sourceId": "NHS_HEADACHE_2024",
@@ -115,6 +116,8 @@ Embedding 固定为：
 | `NHS_HEADACHE_2024` | 头痛 | NHS Headaches |
 | `CDC_STROKE_SIGNS_2026` | 头痛/卒中危险信号教育 | CDC Signs and Symptoms of Stroke |
 | `CDC_HEART_ATTACK_2024` | 胸痛/心脏病发作危险信号教育 | CDC About Heart Attack |
+| `MEDLINEPLUS_CHEST_PAIN_2025` | 胸痛 | MedlinePlus Chest Pain |
+| `NHS_EMERGENCY_HELP_2023` | 通用急救注意事项 | NHS When to call emergency services |
 
 `knowledge_base.json` 保存审核后的固定中文摘要、原始 HTTPS URL 和审核日期。更新语料必须经过人工审核，同时同步 Python catalog、Node.js 白名单、语料版本和两端测试；LightRAG 检索结果本身不能直接成为面向用户的医学事实。
 
@@ -135,22 +138,24 @@ Embedding 固定为：
 python -m pip install -r python_knowledge_service/requirements.txt
 ```
 
-至少配置 `LIGHTRAG_EMBEDDING_API_KEY` 和 `LIGHTRAG_EMBEDDING_BASE_URL`；LLM 默认读取已有 `DEEPSEEK_API_KEY`。然后分别启动：
+至少配置 `EMBEDDING_BASE_URL`、`EMBEDDING_API_KEY` 和 `EMBEDDING_MODEL=BAAI/bge-m3`；LLM 默认读取已有 `DEEPSEEK_API_KEY`。然后分别启动：
 
 ```powershell
 npm run start:python-knowledge
 npm run start:agent-api
 ```
 
-若 BGE-M3 由本地 OpenAI-compatible 服务提供，`LIGHTRAG_EMBEDDING_BASE_URL` 指向该服务地址；模型名仍必须为 `BAAI/bge-m3`。
+若 BGE-M3 由本地 OpenAI-compatible 服务提供，`EMBEDDING_BASE_URL` 指向其 API 基地址；适配器会调用 `/embeddings`，模型名仍必须为 `BAAI/bge-m3`。Phase 3.1 的真实闭环结果见 [Real Embedding & Retrieval Validation](phase-3-1-real-embedding-validation.md)。
 
 ## 9. 验证
 
-- Phase 3 Node.js 知识层专项测试：8/8；
-- Python 服务测试：12/12（原 Python AI Service 4 项 + LightRAG Knowledge Service 8 项）；
-- 完整 Node.js tests：269/269；
+- Phase 3 Node.js 架构与知识层专项测试：13/13；
+- Python 服务测试：19/19（原 Python AI Service 4 项 + Knowledge/Embedding 15 项）；
+- 完整 Node.js tests：271/271；
 - Phase 1 Safety Invariants：10/10；
-- Node.js 覆盖率：行 93.68%、分支 82.53%、函数 93.38%；
+- Node.js 覆盖率：行 93.69%、分支 82.53%、函数 93.38%；
 - 已在隔离虚拟环境中安装并导入 `lightrag-hku==1.5.7`，核验初始化、插入、查询和存储生命周期 API；
-- 缺少 BGE-M3 endpoint 时的本地 HTTP smoke test：`/health` 返回 `degraded`，查询返回安全的 503，不包含知识内容；
+- 真实 BGE-M3 全新索引 smoke test：5 个 chunks、47 个 entities、61 个 relationships，头痛和胸痛均返回批准来源；
+- 真实 Node.js → Python 联调：七轮问诊后风险仍为 `SELF_MONITOR`，RAG 前后完整临床状态一致；
+- Embedding/LightRAG 异常与无结果测试均安全降级，不包含编造知识；
 - 结论仅表示工程安全边界与回归测试通过，不代表临床验证或真实世界部署许可。

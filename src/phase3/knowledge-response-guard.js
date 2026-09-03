@@ -106,7 +106,11 @@ function assertApprovedItem(item, topic, seen) {
     throw new KnowledgeResponseSafetyError("INVALID_ITEM");
   }
   const approved = APPROVED_KNOWLEDGE_SOURCES[item.sourceId];
-  if (!approved || approved.topic !== topic || seen.has(item.sourceId)) {
+  if (
+    !approved
+    || !new Set([topic, "all"]).has(approved.topic)
+    || seen.has(item.sourceId)
+  ) {
     throw new KnowledgeResponseSafetyError("UNAPPROVED_SOURCE");
   }
   const expected = {

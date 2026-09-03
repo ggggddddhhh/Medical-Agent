@@ -21,9 +21,12 @@ test("Phase 3 pins LightRAG and BAAI/bge-m3 without adding a Clinical Pathway", 
   assert.match(requirements, /^lightrag-hku==1\.5\.7$/m);
 
   const envExample = await readFile(new URL("../.env.example", import.meta.url), "utf8");
-  assert.match(envExample, /^LIGHTRAG_EMBEDDING_MODEL=BAAI\/bge-m3$/m);
+  assert.match(envExample, /^EMBEDDING_BASE_URL=$/m);
+  assert.match(envExample, /^EMBEDDING_API_KEY=$/m);
+  assert.match(envExample, /^EMBEDDING_MODEL=BAAI\/bge-m3$/m);
   assert.match(envExample, /^LIGHTRAG_EMBEDDING_DIM=1024$/m);
   assert.match(envExample, /^LIGHTRAG_EMBEDDING_MAX_TOKENS=8192$/m);
+  assert.match(envExample, /^LIGHTRAG_STARTUP_TIMEOUT_SECONDS=600$/m);
 
   const knowledgeStartup = await readFile(
     new URL("../scripts/run-python-knowledge-service.js", import.meta.url),
@@ -35,6 +38,35 @@ test("Phase 3 pins LightRAG and BAAI/bge-m3 without adding a Clinical Pathway", 
   const protocols = (await readdir(new URL("../src/protocols", import.meta.url)))
     .filter((file) => file.endsWith(".js") && !["index.js", "extraction-helpers.js"].includes(file));
   assert.deepEqual(protocols.sort(), ["chest-pain.js", "headache.js"]);
+});
+
+test("Phase 3.1 provides a real index, retrieval and Agent integration smoke path", async () => {
+  const smoke = await readFile(
+    new URL("../python_knowledge_service/live_smoke.py", import.meta.url),
+    "utf8",
+  );
+  const agentSmoke = await readFile(
+    new URL("../scripts/run-phase3-agent-rag-client-smoke.js", import.meta.url),
+    "utf8",
+  );
+  const report = await readFile(
+    new URL("../docs/phase-3-1-real-embedding-validation.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(smoke, /run_node_integration/);
+  assert.match(agentSmoke, /caseStateUnchangedByRag/);
+  for (const required of [
+    "EMBEDDING_BASE_URL",
+    "EMBEDDING_API_KEY",
+    "EMBEDDING_MODEL",
+    "BAAI/bge-m3",
+    "5",
+    "entities",
+    "relationships",
+    "Node.js → Python",
+  ]) {
+    assert.match(report, new RegExp(required));
+  }
 });
 
 test("Phase 3 document records API, knowledge sources and safety boundary", async () => {

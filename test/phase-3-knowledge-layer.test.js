@@ -61,6 +61,18 @@ test("knowledge guard materializes approved content without changing the decisio
   assert.equal(decision.disposition, Disposition.CLINIC_SOON);
 });
 
+test("general emergency knowledge is approved for either supported topic", () => {
+  const guard = new KnowledgeResponseGuard();
+  for (const topic of ["headache", "chest_pain"]) {
+    const support = guard.validate({
+      payload: approvedPayload("NHS_EMERGENCY_HELP_2023"),
+      request: { topic, intent: "health_education", limit: 2 },
+      decision: fixedDecision(`general-${topic}`, Disposition.CLINIC_SOON),
+    });
+    assert.equal(support.sources[0].sourceId, "NHS_EMERGENCY_HELP_2023");
+  }
+});
+
 test("knowledge guard rejects decision fields and unapproved source content", () => {
   const decision = fixedDecision("guard-reject", Disposition.CLINIC_SOON);
   const request = { topic: "headache", intent: "health_education", limit: 2 };

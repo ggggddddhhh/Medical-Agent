@@ -37,6 +37,8 @@ class KnowledgeService:
             "ready": bool(self.backend.ready),
             "corpusVersion": CORPUS_VERSION,
             "documentCount": self.catalog.document_count,
+            "embeddingModel": getattr(self.backend, "embedding_model", None),
+            "indexedDocumentCount": getattr(self.backend, "indexed_document_count", 0),
         }
 
     def query(self, payload: Any) -> dict[str, Any]:

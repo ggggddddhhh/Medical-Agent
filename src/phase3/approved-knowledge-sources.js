@@ -1,4 +1,4 @@
-export const KNOWLEDGE_CORPUS_VERSION = "medical-education-mini-corpus-0.1.0";
+export const KNOWLEDGE_CORPUS_VERSION = "medical-education-mini-corpus-0.2.0";
 
 export const APPROVED_KNOWLEDGE_SOURCES = Object.freeze({
   NHS_HEADACHE_2024: Object.freeze({
@@ -24,5 +24,21 @@ export const APPROVED_KNOWLEDGE_SOURCES = Object.freeze({
     reviewedAt: "2024-10-24",
     snippet:
       "需要关注的心脏事件警示包括胸部疼痛或不适、气短、下颌或颈背及手臂肩部不适、头晕或冷汗；出现相关警示时应立即联系当地急救服务。",
+  }),
+  MEDLINEPLUS_CHEST_PAIN_2025: Object.freeze({
+    topic: "chest_pain",
+    title: "MedlinePlus — Chest Pain",
+    url: "https://medlineplus.gov/chestpain.html",
+    reviewedAt: "2025-08-24",
+    snippet:
+      "胸痛原因很多，不能仅凭症状自行判断。胸痛持续不缓解、呈挤压或压迫感，或伴恶心、出汗、头晕、气短时，应立即寻求医疗救助。",
+  }),
+  NHS_EMERGENCY_HELP_2023: Object.freeze({
+    topic: "all",
+    title: "NHS — When to call emergency services",
+    url: "https://www.nhs.uk/nhs-services/urgent-and-emergency-care-services/when-to-call-999/",
+    reviewedAt: "2023-02-03",
+    snippet:
+      "遇到危及生命的紧急情况，应立即联系当地急救服务，准确说明位置、发生情况和联系方式；等待期间应陪伴患者、按调度人员指导提供力所能及的基本急救，并在病情变化时再次告知急救服务。",
   }),
 });

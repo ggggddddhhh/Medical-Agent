@@ -9,6 +9,7 @@ from . import CORPUS_VERSION
 
 DEFAULT_CATALOG_PATH = Path(__file__).with_name("knowledge_base.json")
 ALLOWED_TOPICS = frozenset({"headache", "chest_pain"})
+ALLOWED_DOCUMENT_TOPICS = ALLOWED_TOPICS | {"all"}
 
 
 class CatalogError(ValueError):
@@ -68,7 +69,10 @@ class ApprovedKnowledgeCatalog:
             document = self._documents.get(source_id)
             if (
                 not document
-                or (topic is not None and document["topic"] != topic)
+                or (
+                    topic is not None
+                    and document["topic"] not in {topic, "all"}
+                )
                 or any(item["sourceId"] == source_id for item in result)
             ):
                 continue
@@ -92,7 +96,7 @@ class ApprovedKnowledgeCatalog:
         for key in ("sourceId", "topic", "title", "url", "reviewedAt", "snippet"):
             if not isinstance(document.get(key), str) or not document[key].strip():
                 raise CatalogError(f"Knowledge document requires {key}.")
-        if document["topic"] not in ALLOWED_TOPICS:
+        if document["topic"] not in ALLOWED_DOCUMENT_TOPICS:
             raise CatalogError("Knowledge document topic is not supported.")
         parsed = urlparse(document["url"])
         if parsed.scheme != "https" or not parsed.netloc:

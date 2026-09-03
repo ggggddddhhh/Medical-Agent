@@ -84,5 +84,8 @@ Phase 2C 以只读包装器把现有结构化决策转换为固定的用户响�
 ## Phase 3 Python LightRAG Knowledge Service
 
 - [Phase 3 Architecture and Safety Contract](docs/phase-3-lightrag-knowledge-service.md)
+- [Phase 3.1 Real Embedding & Retrieval Validation](docs/phase-3-1-real-embedding-validation.md)
 
 Phase 3 新增独立 Python LightRAG 服务，固定使用 `BAAI/bge-m3`（1024 维、8192 tokens）进行知识检索。RAG 只返回经审核的一般医学解释、健康教育片段和来源；Node.js 继续独占 CaseState、风险判断与安全裁决。知识服务失败、无结果或返回越权字段时，系统保留原始安全回复并停止知识增强。
+
+Phase 3.1 使用 `EMBEDDING_BASE_URL`、`EMBEDDING_API_KEY` 和 `EMBEDDING_MODEL=BAAI/bge-m3` 完成真实索引、检索与 Node.js → Python 联调。配置完成后可运行 `npm run test:rag:live` 验证完整闭环。
