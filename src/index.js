@@ -178,6 +178,21 @@ export {
   KnowledgeEnrichedAgent,
 } from "./phase3/knowledge-enriched-agent.js";
 export { createPhase3Agent } from "./phase3/create-phase3-agent.js";
+export {
+  DEMO_CASE_CATALOG_VERSION,
+  DEMO_CASES,
+  getDemoCase,
+  listDemoCases,
+} from "./phase4/demo-cases.js";
+export {
+  DEMO_APPLICATION_VERSION,
+  DemoApplication,
+} from "./phase4/demo-application.js";
+export {
+  DEMO_API_VERSION,
+  createDemoApiServer,
+} from "./phase4/demo-api-server.js";
+export { createPhase4Demo } from "./phase4/create-phase4-demo.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
 export {
   evaluateRealModel,

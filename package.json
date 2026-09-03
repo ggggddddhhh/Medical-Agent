@@ -13,6 +13,7 @@
     "start:agent-api": "node scripts/run-phase3-agent-api.js",
     "start:python-ai": "node scripts/run-python-ai-service.js",
     "start:python-knowledge": "node scripts/run-python-knowledge-service.js",
+    "start:demo": "node scripts/run-phase4-demo-api.js",
     "eval:deepseek": "node scripts/run-phase-2a-deepseek-evaluation.js",
     "eval:deepseek:phase2a1": "node scripts/run-phase-2a1-deepseek-evaluation.js",
     "eval:deepseek:phase2a2": "node scripts/run-phase-2a2-deepseek-evaluation.js",
