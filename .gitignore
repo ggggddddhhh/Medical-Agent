@@ -2,6 +2,8 @@ node_modules/
 coverage/
 __pycache__/
 *.py[cod]
+runtime/
+.venv/
 *.log
 .env
 .env.*

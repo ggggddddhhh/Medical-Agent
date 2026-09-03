@@ -154,6 +154,30 @@ export {
   ResponseLayerAgent,
 } from "./phase2c/response-layer-agent.js";
 export { createPhase2CAgentLoop } from "./phase2c/create-phase2c-agent.js";
+export {
+  APPROVED_KNOWLEDGE_SOURCES,
+  KNOWLEDGE_CORPUS_VERSION,
+} from "./phase3/approved-knowledge-sources.js";
+export {
+  KNOWLEDGE_SUPPORT_POLICY_VERSION,
+  KnowledgeSupportPolicy,
+} from "./phase3/knowledge-support-policy.js";
+export {
+  PYTHON_KNOWLEDGE_CLIENT_VERSION,
+  KnowledgeServiceClientError,
+  PythonKnowledgeServiceClient,
+} from "./phase3/python-knowledge-service-client.js";
+export {
+  KNOWLEDGE_RESPONSE_GUARD_VERSION,
+  KnowledgeResponseGuard,
+  KnowledgeResponseSafetyError,
+  emptyKnowledgeSupport,
+} from "./phase3/knowledge-response-guard.js";
+export {
+  KNOWLEDGE_ENRICHED_AGENT_VERSION,
+  KnowledgeEnrichedAgent,
+} from "./phase3/knowledge-enriched-agent.js";
+export { createPhase3Agent } from "./phase3/create-phase3-agent.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
 export {
   evaluateRealModel,

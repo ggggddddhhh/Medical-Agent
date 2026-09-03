@@ -80,3 +80,9 @@ Phase 2B 在未修改 Safety Core、Semantic Gate、CaseState 和 Clinical Pathw
 - [Phase 2C Architecture and Safety Contract](docs/phase-2c-response-layer.md)
 
 Phase 2C 以只读包装器把现有结构化决策转换为固定的用户响应字段，并再次经过响应安全门。风险等级、处置、原因码、CaseState 和 Decision Trace 仍由原 Node.js Core 独占；本阶段没有接入 RAG，也没有让生成层新增医学事实或修改风险结论。
+
+## Phase 3 Python LightRAG Knowledge Service
+
+- [Phase 3 Architecture and Safety Contract](docs/phase-3-lightrag-knowledge-service.md)
+
+Phase 3 新增独立 Python LightRAG 服务，固定使用 `BAAI/bge-m3`（1024 维、8192 tokens）进行知识检索。RAG 只返回经审核的一般医学解释、健康教育片段和来源；Node.js 继续独占 CaseState、风险判断与安全裁决。知识服务失败、无结果或返回越权字段时，系统保留原始安全回复并停止知识增强。
