@@ -29,7 +29,8 @@
     "eval:deepseek:phase2a2": "node --env-file-if-exists=.env scripts/run-phase-2a2-deepseek-evaluation.js",
     "eval:deepseek:phase2a3": "node --env-file-if-exists=.env scripts/run-phase-2a3-deepseek-evaluation.js",
     "eval:deepseek:phase2a4": "node --env-file-if-exists=.env scripts/run-phase-2a4-deepseek-evaluation.js",
-    "eval:deepseek:phase2a-promotion": "node --env-file-if-exists=.env scripts/run-phase-2a-promotion-evaluation.js"
+    "eval:deepseek:phase2a-promotion": "node --env-file-if-exists=.env scripts/run-phase-2a-promotion-evaluation.js",
+    "eval:phase5.3": "node scripts/run-phase-5.3-stability-validation.js --write"
   },
   "engines": {
     "node": ">=22"

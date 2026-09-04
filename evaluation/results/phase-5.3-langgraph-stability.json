@@ -1,0 +1,196 @@
+{
+  "evaluatorVersion": "phase-5.3-stability-evaluator-0.1.0",
+  "datasetVersion": "phase-5.3-stability-cases-0.1.0",
+  "validationVerdict": "PASS_WITH_CONDITIONS",
+  "defaultRecommendation": "KEEP_LEGACY_DEFAULT",
+  "duplicateQuestionBenchmark": {
+    "totalCases": 39,
+    "coverage": [
+      "headache",
+      "chest_pain",
+      "fever",
+      "cough",
+      "abdominal_pain"
+    ],
+    "activePlannerPathways": [
+      "headache",
+      "chest_pain"
+    ],
+    "unsupportedBoundaryPathways": [
+      "fever",
+      "cough",
+      "abdominal_pain"
+    ],
+    "duplicateChallengeCases": 20,
+    "legacy": {
+      "count": 20,
+      "total": 20,
+      "duplicateQuestionRate": 1
+    },
+    "langgraph": {
+      "count": 0,
+      "total": 20,
+      "duplicateQuestionRate": 0
+    },
+    "intentionalDuplicateCorrections": 20,
+    "questionDrift": {
+      "count": 0,
+      "total": 19,
+      "rate": 0
+    },
+    "unsupportedBoundaryConsistency": {
+      "passed": 9,
+      "total": 9
+    }
+  },
+  "sessionResumeStability": {
+    "passed": 2,
+    "total": 2,
+    "fieldPasses": {
+      "sessionId": 2,
+      "caseState": 2,
+      "factMemory": 2,
+      "pendingQuestion": 2,
+      "questionLedger": 2
+    },
+    "cases": [
+      {
+        "id": "resume-headache",
+        "passed": true,
+        "restoredFields": {
+          "sessionId": true,
+          "caseState": true,
+          "factMemory": true,
+          "pendingQuestion": true,
+          "questionLedger": true
+        },
+        "firstQuestionId": "HEADACHE_ONSET",
+        "nextQuestionId": "HEADACHE_NEURO"
+      },
+      {
+        "id": "resume-chest-pain",
+        "passed": true,
+        "restoredFields": {
+          "sessionId": true,
+          "caseState": true,
+          "factMemory": true,
+          "pendingQuestion": true,
+          "questionLedger": true
+        },
+        "firstQuestionId": "CHEST_PAIN_BREATHING",
+        "nextQuestionId": "CHEST_PAIN_PRESSURE"
+      }
+    ]
+  },
+  "safetyRegression": {
+    "total": 3,
+    "riskDrift": 0,
+    "dispositionDrift": 0,
+    "cases": [
+      {
+        "id": "emergency-now",
+        "legacyRiskLevel": "EMERGENCY_NOW",
+        "langgraphRiskLevel": "EMERGENCY_NOW",
+        "legacyDisposition": "EMERGENCY_NOW",
+        "langgraphDisposition": "EMERGENCY_NOW",
+        "expectedMatched": true
+      },
+      {
+        "id": "urgent-same-day",
+        "legacyRiskLevel": "URGENT_SAME_DAY",
+        "langgraphRiskLevel": "URGENT_SAME_DAY",
+        "legacyDisposition": "URGENT_SAME_DAY",
+        "langgraphDisposition": "URGENT_SAME_DAY",
+        "expectedMatched": true
+      },
+      {
+        "id": "self-monitor",
+        "legacyRiskLevel": "SELF_MONITOR",
+        "langgraphRiskLevel": "SELF_MONITOR",
+        "legacyDisposition": "SELF_MONITOR",
+        "langgraphDisposition": "SELF_MONITOR",
+        "expectedMatched": true
+      }
+    ]
+  },
+  "failureFallback": {
+    "passed": 3,
+    "total": 3,
+    "cases": [
+      {
+        "id": "graph-exception",
+        "passed": true,
+        "fallbackReason": "LANGGRAPH_EXECUTION_FAILED",
+        "riskLevel": "EMERGENCY_NOW",
+        "disposition": "EMERGENCY_NOW"
+      },
+      {
+        "id": "checkpoint-failure",
+        "passed": true,
+        "fallbackReason": "PLANNER_CHECKPOINT_FAILED",
+        "riskLevel": "EMERGENCY_NOW",
+        "disposition": "EMERGENCY_NOW"
+      },
+      {
+        "id": "planner-failure",
+        "passed": true,
+        "fallbackReason": "QUESTION_PLANNER_FAILED",
+        "riskLevel": "EMERGENCY_NOW",
+        "disposition": "EMERGENCY_NOW"
+      }
+    ]
+  },
+  "factMemoryConsistency": {
+    "passed": 6,
+    "total": 6,
+    "cases": [
+      {
+        "id": "headache-known",
+        "status": "known",
+        "expectedQuestionId": "HEADACHE_NEURO",
+        "actualQuestionId": "HEADACHE_NEURO",
+        "passed": true
+      },
+      {
+        "id": "headache-unknown",
+        "status": "unknown",
+        "expectedQuestionId": "HEADACHE_ONSET",
+        "actualQuestionId": "HEADACHE_ONSET",
+        "passed": true
+      },
+      {
+        "id": "headache-conflicting",
+        "status": "conflicting",
+        "expectedQuestionId": "HEADACHE_ONSET",
+        "actualQuestionId": "HEADACHE_ONSET",
+        "passed": true
+      },
+      {
+        "id": "chest_pain-known",
+        "status": "known",
+        "expectedQuestionId": "CHEST_PAIN_PRESSURE",
+        "actualQuestionId": "CHEST_PAIN_PRESSURE",
+        "passed": true
+      },
+      {
+        "id": "chest_pain-unknown",
+        "status": "unknown",
+        "expectedQuestionId": "CHEST_PAIN_BREATHING",
+        "actualQuestionId": "CHEST_PAIN_BREATHING",
+        "passed": true
+      },
+      {
+        "id": "chest_pain-conflicting",
+        "status": "conflicting",
+        "expectedQuestionId": "CHEST_PAIN_BREATHING",
+        "actualQuestionId": "CHEST_PAIN_BREATHING",
+        "passed": true
+      }
+    ]
+  },
+  "conditions": [
+    "Only headache and chest-pain Clinical Pathways exercise active planning.",
+    "Fever, cough and abdominal pain are verified only as unsupported safety boundaries.",
+    "No concurrency, load or long-running real-model soak test is included."
+  ]
+}

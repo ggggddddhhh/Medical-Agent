@@ -249,3 +249,7 @@ export {
   calculateClinicalAssertionMetrics,
   CLINICAL_ASSERTION_METRICS_VERSION,
 } from "./evaluation/clinical-assertion-metrics.js";
+export {
+  evaluatePhase53Stability,
+  PHASE_53_STABILITY_EVALUATOR_VERSION,
+} from "./evaluation/phase5-stability-evaluator.js";
