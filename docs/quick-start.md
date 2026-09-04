@@ -88,13 +88,13 @@ LIGHTRAG_LLM_API_KEY 留空时会回退使用 DEEPSEEK_API_KEY。不要提交填
 
 Phase 5 默认把会话检查点写入 `runtime/memory`。可通过 `MEMORY_STORAGE_DIR` 更换目录；其中包含医疗对话原文，只应保存在受控环境中，且不能提交到 Git。
 
-Phase 5.2 默认保持 Legacy 流程：
+Phase 5.4 默认使用 LangGraph Orchestrator：
 
 ~~~dotenv
-AGENT_ORCHESTRATOR=legacy
+AGENT_ORCHESTRATOR=langgraph
 ~~~
 
-可选值为 `legacy`、`shadow`、`langgraph`。建议先使用 `shadow` 观察 Planner 对比；`langgraph` 只接管 Fact Memory reconcile、Question Planner 和经过既有 Clinical Pathway 校验的 pending question。配置变更后需要重启 Node.js Demo API。
+可选值仍为 `legacy`、`shadow`、`langgraph`。需要回退时设置 `AGENT_ORCHESTRATOR=legacy`；`shadow` 只记录 Planner 对比。LangGraph 只接管 Fact Memory reconcile、Question Planner 和经过既有 Clinical Pathway 校验的 pending question，任何异常都会自动回退到 Legacy，且不会改变 Safety Core 风险裁决。配置变更后需要重启 Node.js Demo API。
 
 ## 5. 启动服务
 

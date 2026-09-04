@@ -6,6 +6,7 @@
 - [Demo 使用说明](demo-guide.md)：三个固定案例、界面状态与五分钟讲解顺序
 - [系统架构](architecture.md)：组件、数据流、服务边界与安全不变量
 - [Phase 5 Memory Layer](phase-5-memory-layer.md)：会话恢复、Fact Memory 与追问去重
+- [Phase 5.4 LangGraph Default Migration](phase-5.4-langgraph-default-migration.md)：默认编排器迁移、Legacy fallback 与稳定性结果
 - [产品设计](product-design.md)：MVP 方向、能力范围与路线
 
 ## 安全与核心验证

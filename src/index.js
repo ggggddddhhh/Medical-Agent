@@ -208,6 +208,7 @@ export {
 } from "./phase5/question-planner.js";
 export {
   AGENT_ORCHESTRATOR_MODES,
+  DEFAULT_AGENT_ORCHESTRATOR_MODE,
   resolveAgentOrchestratorMode,
 } from "./phase5/orchestrator-mode.js";
 export {

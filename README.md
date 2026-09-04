@@ -96,7 +96,7 @@ Copy-Item web/.env.example web/.env
 - EMBEDDING_API_KEY
 - EMBEDDING_MODEL=BAAI/bge-m3
 
-`AGENT_ORCHESTRATOR` 默认为 `legacy`。可使用 `shadow` 只做 Planner 对比，或使用 `langgraph` 让 LangGraph 接管经过批准的 Pathway 追问；任一编排异常都会回退 Legacy 结果。
+`AGENT_ORCHESTRATOR` 默认为 `langgraph`，负责经过批准的 Pathway 追问。仍可切换为 `legacy`，或使用 `shadow` 只做 Planner 对比；任一 LangGraph 编排异常都会自动回退 Legacy 结果。
 
 启动脚本会自动读取根目录 .env；Vite 会自动读取 web/.env。两个真实文件均已被 Git 忽略。
 

@@ -4,8 +4,10 @@ export const AGENT_ORCHESTRATOR_MODES = Object.freeze([
   "langgraph",
 ]);
 
+export const DEFAULT_AGENT_ORCHESTRATOR_MODE = "langgraph";
+
 export function resolveAgentOrchestratorMode(
-  value = process.env.AGENT_ORCHESTRATOR ?? "legacy",
+  value = process.env.AGENT_ORCHESTRATOR ?? DEFAULT_AGENT_ORCHESTRATOR_MODE,
 ) {
   const mode = String(value).trim().toLowerCase();
   if (!AGENT_ORCHESTRATOR_MODES.includes(mode)) {

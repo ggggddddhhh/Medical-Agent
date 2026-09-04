@@ -88,7 +88,6 @@ test("Phase 5.3 records a conditional pass and does not recommend changing the d
   assert.equal(result.validationVerdict, "PASS_WITH_CONDITIONS");
   assert.equal(result.defaultRecommendation, "KEEP_LEGACY_DEFAULT");
 
-  const envExample = await readFile(new URL("../.env.example", import.meta.url), "utf8");
   const report = await readFile(
     new URL("../docs/phase-5.3-langgraph-stability-validation.md", import.meta.url),
     "utf8",
@@ -100,7 +99,6 @@ test("Phase 5.3 records a conditional pass and does not recommend changing the d
     ),
     "utf8",
   ));
-  assert.match(envExample, /^AGENT_ORCHESTRATOR=legacy$/m);
   assert.deepEqual(recordedResult, result);
   for (const marker of [
     "PASS_WITH_CONDITIONS",
