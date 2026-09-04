@@ -48,5 +48,12 @@ test("React Web Demo exposes the three competition cases, service degradation an
     "sources",
     "followUpQuestions",
     "riskLevel",
+    "CaseState",
+    "Safety Core",
+    "Semantic Gate",
+    "RAG Knowledge",
+    "getSession",
+    "gateSummary",
+    "已触发紧急安全升级",
   ]) assert.match(app, new RegExp(required));
 });

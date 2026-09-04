@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import App from "./App.jsx";
@@ -20,6 +20,13 @@ function response(overrides = {}) {
     warningSigns: [],
     followUpQuestions: ["疼痛是突然出现的吗？"],
     knowledgeSupport: { status: "not_requested", snippets: [], sources: [] },
+    coreDecisionTraceId: "core-trace-1",
+    semantic: {
+      extractionStatus: "completed",
+      fallbackToSafetyCore: false,
+      gateSummary: { ACCEPT: 1, UNCERTAIN: 0, REJECT: 0 },
+      decisions: []
+    },
     ...overrides
   };
 }
@@ -31,6 +38,14 @@ function api(overrides = {}) {
     runCase: vi.fn(),
     createSession: vi.fn().mockResolvedValue({ sessionId: "session-1" }),
     sendMessage: vi.fn(),
+    getSession: vi.fn().mockResolvedValue({
+      state: {
+        turnCount: 1,
+        closed: false,
+        chiefComplaint: { code: "headache", rawLabel: "头痛" },
+        factMetadata: { "chiefComplaint.code": { status: "known" } }
+      }
+    }),
     ...overrides
   };
 }
@@ -59,10 +74,14 @@ describe("Medical Agent Web Demo", () => {
     render(<App api={mockApi} />);
 
     await userEvent.click(await screen.findByRole("button", { name: /普通头痛/ }));
-    expect(await screen.findByText("可居家观察")).toBeInTheDocument();
+    const agentPanel = screen.getByLabelText("Agent 状态");
+    expect(await within(agentPanel).findByText("可居家观察")).toBeInTheDocument();
     expect(screen.getByText("当前可按安全提示观察。")).toBeInTheDocument();
-    expect(screen.getByText("已返回审核知识")).toBeInTheDocument();
+    expect(screen.getByText("知识支持已返回")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /NHS Headaches/ })).toHaveAttribute("href", "https://www.nhs.uk/conditions/headaches/");
+    expect(within(agentPanel).getByText("EVALUATED")).toBeInTheDocument();
+    expect(within(agentPanel).getByText("ACTIVE")).toBeInTheDocument();
+    expect(mockApi.getSession).toHaveBeenCalledWith("fixed-session");
   });
 
   it("keeps one session id across an interactive multi-turn clarification", async () => {
@@ -85,6 +104,33 @@ describe("Medical Agent Web Demo", () => {
     expect(mockApi.createSession).toHaveBeenCalledTimes(1);
     expect(mockApi.sendMessage).toHaveBeenNthCalledWith(1, "session-1", "我头痛");
     expect(mockApi.sendMessage).toHaveBeenNthCalledWith(2, "session-1", "是慢慢出现的");
+    expect(mockApi.getSession).toHaveBeenCalledTimes(2);
+  });
+
+  it("renders emergency safety escalation without implying that RAG changed the decision", async () => {
+    const emergency = response({
+      action: "SAFETY_ESCALATION",
+      disposition: "EMERGENCY_NOW",
+      riskLevel: "EMERGENCY_NOW",
+      summary: "请立即联系急救服务。",
+      followUpQuestions: [],
+      knowledgeSupport: { status: "not_requested", snippets: [], sources: [] }
+    });
+    const mockApi = api({
+      runCase: vi.fn().mockResolvedValue({
+        sessionId: "emergency-session",
+        turns: [{ turn: 1, userMessage: "胸口像石头压着，喘不上气", response: emergency }],
+        finalResponse: emergency
+      })
+    });
+    render(<App api={mockApi} />);
+
+    await userEvent.click(await screen.findByRole("button", { name: /高风险胸痛/ }));
+    expect(await screen.findByText("已触发紧急安全升级")).toBeInTheDocument();
+    const agentPanel = screen.getByLabelText("Agent 状态");
+    expect(within(agentPanel).getByText("立即寻求急救")).toBeInTheDocument();
+    expect(within(agentPanel).getByText("本轮未调用 RAG")).toBeInTheDocument();
+    expect(within(agentPanel).getByText("EMERGENCY_NOW")).toBeInTheDocument();
   });
 
   it("shows an explicit disconnected state without inventing medical output", async () => {
