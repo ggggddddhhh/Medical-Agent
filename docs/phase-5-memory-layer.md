@@ -58,3 +58,7 @@ Question Planner 按以下顺序工作：当前未解决 clarification、成人�
 - 恢复后的高风险肯定回答仍触发 `EMERGENCY_NOW`；
 - Memory 持久化故障不改变 Safety Core 结论；
 - Safety Core、Semantic Gate 和已有两个 Pathway 保持字节级不变。
+
+## Phase 5.1 Shadow Prototype
+
+后续 LangGraph.js 迁移原型见 `docs/phase-5.1-langgraph-shadow.md`。该原型仅执行 StateGraph checkpoint、Fact Memory/Question Planner 编排和 Legacy 对比，不接入当前 `createPhase5Agent()`，也不改变本文件描述的 Legacy Memory Layer。
