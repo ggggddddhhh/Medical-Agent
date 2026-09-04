@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App.jsx";
 
 const cases = [
@@ -27,6 +27,15 @@ function response(overrides = {}) {
       gateSummary: { ACCEPT: 1, UNCERTAIN: 0, REJECT: 0 },
       decisions: []
     },
+    memory: {
+      persistenceStatus: "available",
+      restorable: true,
+      historyMessageCount: 2,
+      snapshotCount: 2,
+      answeredFactPaths: ["patientContext.adultConfirmed"],
+      nextQuestion: { id: "ONSET", factPath: "symptoms.onsetPattern", text: "疼痛是突然出现的吗？" },
+      duplicateQuestionFiltered: false
+    },
     ...overrides
   };
 }
@@ -43,14 +52,27 @@ function api(overrides = {}) {
         turnCount: 1,
         closed: false,
         chiefComplaint: { code: "headache", rawLabel: "头痛" },
-        factMetadata: { "chiefComplaint.code": { status: "known" } }
-      }
+        decisionState: { action: "ASK_MORE", disposition: null },
+        factMetadata: {
+          "chiefComplaint.code": { status: "known", value: "headache", updatedAtTurn: 1 },
+          "patientContext.adultConfirmed": { status: "known", value: true, updatedAtTurn: 0 }
+        }
+      },
+      pendingClarification: {
+        factPath: "symptoms.onsetPattern",
+        question: { id: "ONSET", text: "疼痛是突然出现的吗？" }
+      },
+      memory: response().memory
     }),
+    resumeSession: vi.fn(),
+    getHistory: vi.fn(),
     ...overrides
   };
 }
 
 describe("Medical Agent Web Demo", () => {
+  beforeEach(() => localStorage.clear());
+
   it("replays a fixed case and displays risk plus reviewed knowledge sources", async () => {
     const finalResponse = response({
       action: "DISPOSITION",
@@ -140,5 +162,76 @@ describe("Medical Agent Web Demo", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Demo API 暂时不可用");
     expect(screen.getByText("服务未连接")).toBeInTheDocument();
     expect(document.body).not.toHaveTextContent("已经确诊");
+  });
+
+  it("shows Session History, Fact Memory, pending fields and the six-step Agent Trace", async () => {
+    const mockApi = api({ sendMessage: vi.fn().mockResolvedValue(response()) });
+    render(<App api={mockApi} />);
+    await screen.findByText("服务已连接");
+
+    await userEvent.type(screen.getByLabelText("描述症状或回答追问"), "我头痛");
+    await userEvent.click(screen.getByRole("button", { name: "发送消息" }));
+
+    expect(await screen.findByText("头部不适评估", { selector: ".session-item strong" })).toBeInTheDocument();
+    expect(screen.getByLabelText("历史会话列表")).toHaveTextContent("ASK MORE");
+    const panel = screen.getByLabelText("Agent 状态");
+    expect(within(panel).getByText("Current Session Memory")).toBeInTheDocument();
+    expect(within(panel).getByText("Fact Memory")).toBeInTheDocument();
+    expect(within(panel).getByText("已回答字段")).toBeInTheDocument();
+    expect(within(panel).getByText("待确认字段")).toBeInTheDocument();
+    expect(within(panel).getByText("CaseState 变化记录")).toBeInTheDocument();
+
+    const trace = screen.getByLabelText("Agent Trace");
+    for (const label of ["用户输入", "Fact Extraction", "Question Planner", "Safety Core", "RAG", "Response"]) {
+      expect(within(trace).getByText(label)).toBeInTheDocument();
+    }
+    const question = screen.getByRole("button", { name: /疼痛是突然出现的吗/ });
+    expect(question).toHaveTextContent("缺失：起病方式");
+    expect(question).toHaveTextContent("原因：补齐当前路径的最小必要信息");
+    expect(question).toHaveTextContent("P2 路径");
+  });
+
+  it("restores a persisted session through the existing resume and history routes", async () => {
+    localStorage.setItem("medical-agent-session-history-v1", JSON.stringify([{
+      sessionId: "saved-session-42",
+      name: "昨晚胸口不舒服",
+      updatedAt: new Date().toISOString(),
+      riskLevel: "ASK_MORE",
+      turnCount: 1
+    }]));
+    const restored = {
+      state: {
+        sessionId: "saved-session-42",
+        turnCount: 1,
+        closed: false,
+        chiefComplaint: { code: "chest_pain", rawLabel: "胸痛" },
+        decisionState: { action: "ASK_MORE", disposition: null },
+        factMetadata: { "chiefComplaint.code": { status: "known", value: "chest_pain", updatedAtTurn: 1 } }
+      },
+      pendingClarification: {
+        factPath: "redFlags.difficultyBreathing",
+        question: { id: "BREATHING", text: "胸痛时有没有呼吸困难？" }
+      },
+      memory: {
+        persistenceStatus: "available", restorable: true, historyMessageCount: 2,
+        snapshotCount: 2, answeredFactPaths: ["chiefComplaint.code"],
+        nextQuestion: { id: "BREATHING", factPath: "redFlags.difficultyBreathing", text: "胸痛时有没有呼吸困难？" }
+      }
+    };
+    const mockApi = api({
+      resumeSession: vi.fn().mockResolvedValue(restored),
+      getHistory: vi.fn().mockResolvedValue({ history: [
+        { role: "user", content: "我胸痛", turn: 1 },
+        { role: "assistant", content: "还需要确认呼吸情况。", turn: 1 }
+      ] })
+    });
+    render(<App api={mockApi} />);
+
+    await userEvent.click(await screen.findByRole("button", { name: /恢复/ }));
+    expect(mockApi.resumeSession).toHaveBeenCalledWith("saved-session-42");
+    expect(mockApi.getHistory).toHaveBeenCalledWith("saved-session-42");
+    expect(await screen.findByText("我胸痛")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /胸痛时有没有呼吸困难/ })).toHaveTextContent("P0 高风险");
+    expect(screen.getByText("恢复检查点")).toBeInTheDocument();
   });
 });

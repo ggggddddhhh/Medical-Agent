@@ -10,7 +10,7 @@ function jsonResponse(payload, status = 200) {
 }
 
 describe("Demo API client", () => {
-  it("uses only the published Phase 4 routes and encodes identifiers", async () => {
+  it("uses only the published Demo routes and encodes identifiers", async () => {
     const fetchImpl = vi.fn(() => jsonResponse({ ok: true }));
     const api = createDemoApi({ baseUrl: "http://demo.test/", fetchImpl });
 
@@ -20,6 +20,8 @@ describe("Demo API client", () => {
     await api.createSession({ adultConfirmed: true });
     await api.sendMessage("session/1", "我头痛");
     await api.getSession("session/1");
+    await api.resumeSession("session/1");
+    await api.getHistory("session/1");
 
     expect(fetchImpl.mock.calls.map(([url]) => url)).toEqual([
       "http://demo.test/health",
@@ -27,10 +29,13 @@ describe("Demo API client", () => {
       "http://demo.test/v1/demo/cases/ordinary%20headache/run",
       "http://demo.test/v1/demo/sessions",
       "http://demo.test/v1/demo/sessions/session%2F1/messages",
-      "http://demo.test/v1/demo/sessions/session%2F1"
+      "http://demo.test/v1/demo/sessions/session%2F1",
+      "http://demo.test/v1/demo/sessions/session%2F1/resume",
+      "http://demo.test/v1/demo/sessions/session%2F1/history"
     ]);
     expect(JSON.parse(fetchImpl.mock.calls[3][1].body)).toEqual({ context: { adultConfirmed: true } });
     expect(JSON.parse(fetchImpl.mock.calls[4][1].body)).toEqual({ message: "我头痛" });
+    expect(fetchImpl.mock.calls[6][1]).toMatchObject({ method: "POST" });
   });
 
   it("maps transport and HTTP failures to safe user-facing errors", async () => {

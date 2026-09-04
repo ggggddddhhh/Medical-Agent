@@ -5,20 +5,23 @@
 React Web Demo 是一个位于 web/ 的独立 Vite 应用，只依赖 Phase 4 公开 HTTP API。
 
 ~~~text
-React Chat UI（5173）
+React Stateful Agent UI（5173）
   → Demo API Client（/api）
      → Vite 开发代理
         → Phase 4 Demo API（8003）
            → 既有 Node.js Agent Core
+              → Phase 5 Session / Fact Memory / Question Planner
               → 可选 Python LightRAG Service
 ~~~
 
-- web/src/App.jsx：三栏比赛界面、会话复用、固定案例回放和只读 Agent 状态编排；
+- web/src/App.jsx：三栏比赛界面、Session History、会话恢复、Memory Inspector、Agent Trace、固定案例回放和只读 Agent 状态编排；
 - web/src/api/demo-api.js：Phase 4 API 的唯一前端访问边界；
 - web/src/styles.css：医疗风格、桌面与移动端响应式布局；
 - web/src/*.test.*：API 路由、固定案例、多轮 session 复用和异常降级测试。
 
 前端不导入 Node.js Core，不直接读写 CaseState，也不生成或修改风险结论。
+
+Phase 5 的展示语义参考了 LangGraph 的 thread/checkpoint 思路：把同一会话视为连续状态容器，把每轮 CaseState 视为可恢复检查点；项目没有引入 LangGraph，持久化与规划仍由现有 Node.js Memory Layer 实现。
 
 ## 2. API 连接与运行
 
@@ -42,21 +45,34 @@ npm run start:web
 
 ## 3. 页面与演示案例
 
-页面采用现代 AI Chat 风格三栏布局：
+页面采用现代 Stateful Agent 风格三栏布局：
 
-1. 左栏：普通头痛、模糊胸痛、高风险胸痛三个一键案例，以及“用户症状 → Agent 追问 → 风险判断 → 安全回复 → 知识支持”流程提示；
-2. 中栏：多轮 Chat、紧急安全 Banner、结构化 Agent 回复和可聚焦输入框的追问 Question Card；
-3. 右栏：风险等级 Badge、通过既有 session API 读取的 CaseState、Safety Core 状态、Semantic Gate 统计、RAG 状态及来源卡片。
+1. 左栏 Session History：展示按主诉生成的通用会话名称、更新时间、风险等级、轮次和恢复按钮；浏览器只保存会话摘要，真实消息与 CaseState 仍以后端检查点为准；
+2. 左栏 Demo Cases：普通头痛、模糊胸痛、高风险胸痛三个一键案例；
+3. 中栏 Agent Chat：多轮对话、紧急安全 Banner、结构化回复，以及 `用户输入 → Fact Extraction → Question Planner → Safety Core → RAG → Response` 实时轨迹；
+4. 中栏 Question Planner Card：标明当前缺失字段、为什么需要询问，以及 P0/P1/P2 优先级；
+5. 右栏 Memory Inspector：展示当前 Session 的持久化状态、快照数量、已确认事实、已回答字段、待确认字段和 CaseState 变化记录；
+6. 右栏 Safety Status：继续展示风险等级、Safety Core、Semantic Gate、RAG 状态及来源，不让记忆层或 UI 覆盖安全裁决。
 
 ![Medical Agent React Web Demo](images/react-web-demo.png)
 
-截图展示比赛首页的三栏状态：左侧可快速切换固定案例，中间完整呈现多轮医疗对话，右侧同步展示 Agent 的安全决策链。顶部阶段指示器帮助评委直观看到从症状输入到知识支持的处理过程。运行任一案例后，所有状态均使用 Demo API 返回值同步更新。
+截图文件仍展示基础三栏版本；当前 Phase 5 页面在此基础上增加了左侧历史会话、中央 Agent Trace 与右侧 Memory Inspector。运行任一案例或发送消息后，评委可同时看到事实被写入检查点、Question Planner 选择下一项缺口、Safety Core 完成裁决以及 RAG 是否被调用。
+
+### 会话恢复演示
+
+1. 输入一条症状并完成至少一轮追问；
+2. 点击“新会话”，左侧仍保留上一会话的脱敏摘要；
+3. 点击该会话的“恢复”；
+4. UI 通过既有 `POST /v1/demo/sessions/{sessionId}/resume` 和 `GET /v1/demo/sessions/{sessionId}/history` 恢复历史消息、CaseState 与待回答问题；
+5. 继续回答后，系统复用同一 `sessionId`，避免重复询问已经确认的字段。
 
 ## 4. 安全边界
 
 - Safety Core、CaseState、Semantic Gate、Multi-turn Loop、Response Layer 和 LightRAG 服务均未修改；
 - 前端只渲染服务端返回的结构化安全回复；
 - CaseState 面板只通过既有 GET session API 读取，不向后端写入或伪造状态；
+- Session History 的 localStorage 条目只含 sessionId、显示名、时间、风险等级和轮次，不保存原始医疗对话；
+- 会话恢复必须由服务端检查点校验；前端摘要不能作为医疗事实或风险依据；
 - RAG 状态与来源单独展示，不参与或覆盖 riskLevel；
 - API 或 RAG 异常时显示明确降级状态，不编造医学内容；
 - 页面持续提示本系统不构成医疗诊断或治疗建议。
@@ -70,9 +86,9 @@ npm run test:coverage
 
 最终验证结果：
 
-- Node.js：282/282；
+- Node.js：296/296；
 - Python：19/19；
-- React/Vitest：6/6；
+- React/Vitest：8/8；
 - Phase 1 Safety Invariants：10/10；
 - Vite 生产构建：通过；
 - Node.js 覆盖率：行 93.57%、分支 82.48%、函数 93.60%。

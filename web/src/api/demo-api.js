@@ -64,7 +64,14 @@ export function createDemoApi({
       `/v1/demo/sessions/${encodeURIComponent(sessionId)}/messages`,
       { method: "POST", body: JSON.stringify({ message }) }
     ),
-    getSession: (sessionId) => request(`/v1/demo/sessions/${encodeURIComponent(sessionId)}`)
+    getSession: (sessionId) => request(`/v1/demo/sessions/${encodeURIComponent(sessionId)}`),
+    resumeSession: (sessionId) => request(
+      `/v1/demo/sessions/${encodeURIComponent(sessionId)}/resume`,
+      { method: "POST" }
+    ),
+    getHistory: (sessionId) => request(
+      `/v1/demo/sessions/${encodeURIComponent(sessionId)}/history`
+    )
   };
 }
 

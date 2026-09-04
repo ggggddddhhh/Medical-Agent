@@ -27,6 +27,8 @@ test("React Web Demo is an API-only client for the published Phase 4 boundary", 
     "/v1/demo/cases",
     "/v1/demo/sessions",
     "/messages",
+    "/resume",
+    "/history",
   ]) assert.match(api, new RegExp(route));
 
   const protocols = (await readdir(new URL("../src/protocols", import.meta.url)))
@@ -55,5 +57,12 @@ test("React Web Demo exposes the three competition cases, service degradation an
     "getSession",
     "gateSummary",
     "已触发紧急安全升级",
+    "SESSION HISTORY",
+    "Current Session Memory",
+    "Fact Memory",
+    "Question Planner",
+    "CaseState 变化记录",
+    "resumeSession",
+    "getHistory",
   ]) assert.match(app, new RegExp(required));
 });
