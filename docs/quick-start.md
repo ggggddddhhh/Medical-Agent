@@ -84,6 +84,8 @@ EMBEDDING_BASE_URL 可以是 API 的 v1 基地址，也可以直接以 /embeddin
 
 LIGHTRAG_LLM_API_KEY 留空时会回退使用 DEEPSEEK_API_KEY。不要提交填好的 .env 或 web/.env。
 
+Phase 5 默认把会话检查点写入 `runtime/memory`。可通过 `MEMORY_STORAGE_DIR` 更换目录；其中包含医疗对话原文，只应保存在受控环境中，且不能提交到 Git。
+
 ## 5. 启动服务
 
 按顺序打开四个终端，并保持每个进程运行。
@@ -121,6 +123,12 @@ npm run start:web
 浏览器打开 http://127.0.0.1:5173。
 
 所有 Node 启动脚本都会读取根目录 .env；Vite 自动读取 web/.env。修改环境变量后必须重启对应服务。
+
+Demo API 重启后，可继续向原 sessionId 的 messages 接口发送消息自动恢复，也可显式调用：
+
+~~~powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:8003/v1/demo/sessions/<sessionId>/resume
+~~~
 
 ## 6. 健康检查
 

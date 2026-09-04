@@ -42,13 +42,24 @@ export function createDemoApiServer({ demo, maxBodyBytes = 65_536 } = {}) {
         );
         return send(response, 200, result);
       }
+      const resume = /^\/v1\/demo\/sessions\/([^/]+)\/resume$/.exec(url.pathname);
+      if (request.method === "POST" && resume) {
+        const sessionId = decodeURIComponent(resume[1]);
+        return send(response, 200, await demo.resumeSession(sessionId));
+      }
+      const history = /^\/v1\/demo\/sessions\/([^/]+)\/history$/.exec(url.pathname);
+      if (request.method === "GET" && history) {
+        const sessionId = decodeURIComponent(history[1]);
+        return send(response, 200, { sessionId, history: demo.getHistory(sessionId) });
+      }
       const session = /^\/v1\/demo\/sessions\/([^/]+)$/.exec(url.pathname);
       if (request.method === "GET" && session) {
         return send(response, 200, demo.getSession(decodeURIComponent(session[1])));
       }
       return send(response, 404, errorBody("NOT_FOUND", "Route not found."));
     } catch (error) {
-      const unknownSession = /Unknown session/.test(error?.message ?? "");
+      const unknownSession = /Unknown session|Session is not active/.test(error?.message ?? "")
+        || error?.code === "SESSION_CHECKPOINT_NOT_FOUND";
       const status = unknownSession || error?.code === "DEMO_CASE_NOT_FOUND"
         ? 404
         : error?.code === "SESSION_TURN_IN_PROGRESS" ? 409 : 400;

@@ -193,6 +193,24 @@ export {
   createDemoApiServer,
 } from "./phase4/demo-api-server.js";
 export { createPhase4Demo } from "./phase4/create-phase4-demo.js";
+export {
+  MEMORY_CHECKPOINT_SCHEMA_VERSION,
+  FILE_SESSION_MANAGER_VERSION,
+  FileSessionManager,
+} from "./phase5/session-manager.js";
+export {
+  FACT_MEMORY_VERSION,
+  FactMemory,
+} from "./phase5/fact-memory.js";
+export {
+  QUESTION_PLANNER_VERSION,
+  QuestionPlanner,
+} from "./phase5/question-planner.js";
+export {
+  MEMORY_LAYER_VERSION,
+  MemoryLayerAgent,
+} from "./phase5/memory-layer-agent.js";
+export { createPhase5Agent } from "./phase5/create-phase5-agent.js";
 export { evaluateSemanticPredictions } from "./evaluation/semantic-metrics.js";
 export {
   evaluateRealModel,

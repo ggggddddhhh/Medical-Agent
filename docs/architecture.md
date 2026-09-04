@@ -21,6 +21,8 @@ flowchart TB
 
     subgraph Node[Node.js 决策层]
         API[Phase 4 Demo API :8003]
+        MEMORY[Phase 5 Memory Layer]
+        CHECKPOINT[(Local Session Checkpoints)]
         LOOP[Multi-turn Agent Loop]
         EXTRACT[Evidence + Assertion Pipeline]
         GATE[Semantic Gate]
@@ -40,7 +42,9 @@ flowchart TB
     end
 
     UI -->|HTTP /api| API
-    API --> LOOP
+    API --> MEMORY
+    MEMORY --> LOOP
+    MEMORY -. sessionId / history / CaseState snapshots .-> CHECKPOINT
     LOOP --> EXTRACT
     EXTRACT --> GATE
     GATE --> STATE
@@ -76,12 +80,15 @@ flowchart TB
 
 UNCERTAIN 会进入真实多轮追问。用户回答后，系统继续使用同一个 sessionId 和同一份 CaseState，并重新执行安全评估。
 
+Phase 5 在主流程外保存会话检查点。进程重启后，未完成追问通过原流程重放并进行 CaseState 完整性校验；Memory 不直接注入医疗事实或修改风险结果。
+
 ## 4. 服务边界
 
 | 组件 | 可以做 | 禁止做 |
 | --- | --- | --- |
 | React Web | 展示消息、状态、来源；提交用户输入 | 计算风险、写 CaseState、绕过 API |
 | Demo API | 会话与固定案例编排 | 新增医学事实或改变 Safety Core |
+| Memory Layer | 保存历史、CaseState 快照、已确认事实投影和问题记录 | 直接写 CaseState、改变风险、绕过 Gate |
 | Python AI | 模型传输、返回结构化候选 | 持久化 CaseState、决定风险 |
 | LightRAG | 检索审核知识、返回来源 ID | 诊断、修改 riskLevel、覆盖安全回复 |
 | Semantic Gate | 依据证据保守裁决事实 | 因 Verifier 单独支持而升级 ACCEPT |

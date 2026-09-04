@@ -16,7 +16,7 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 - 头痛（HEADACHE_V1）
 - 胸痛（CHEST_PAIN_V1）
 
-比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo。该状态不代表临床验证或真实世界部署许可。
+比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo，Phase 5 已增加本地会话检查点、Fact Memory 与问题去重。该状态不代表临床验证或真实世界部署许可。
 
 项目适合用于医疗安全智能体架构研究、语义 Gate 评测、比赛演示和失效安全设计验证；不适合直接处理真实患者数据，也不能作为临床诊断或急救决策系统部署。
 
@@ -26,6 +26,8 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 - Linguistic Assertion：独立判断主体、否定、确定性、时态、引用与假设
 - Semantic Gate：对 ACCEPT / UNCERTAIN / REJECT 进行保守裁决
 - Multi-turn Agent Loop：追问后更新同一份 CaseState 并重新评估安全
+- Memory Layer：持久化 sessionId、历史消息与 CaseState 快照，支持安全恢复
+- Question Planner：根据 Fact Memory 过滤已回答字段，避免重复追问
 - Safety Core：危险信号优先、风险单调、工具失败安全降级
 - Response Layer：把内部决策转换为受约束的用户回复
 - LightRAG Knowledge Service：仅提供健康教育上下文和审核来源
@@ -37,7 +39,9 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 ~~~mermaid
 flowchart LR
     U[用户 / React Demo] --> D[Node.js Demo API]
-    D --> A[Multi-turn Agent Loop]
+    D --> M[Phase 5 Memory Layer]
+    M --> A[Multi-turn Agent Loop]
+    M -. 本地检查点 .-> F[runtime/memory]
     A --> S[Semantic Extraction]
     S --> G[Semantic Gate]
     G --> C[CaseState + Safety Core]
@@ -49,7 +53,7 @@ flowchart LR
     K --> E[BAAI/bge-m3 Embedding API]
 ~~~
 
-Node.js 是临床决策权威；Python 服务不能修改 CaseState、riskLevel、Disposition 或 Safety Core 结果。详细边界见 [架构说明](docs/architecture.md)。
+Node.js 是临床决策权威；Memory 与 Python 服务均不能修改 riskLevel、Disposition 或 Safety Core 结果。详细边界见 [架构说明](docs/architecture.md) 和 [Phase 5 Memory Layer](docs/phase-5-memory-layer.md)。
 
 ## Quick Start
 
@@ -90,6 +94,8 @@ Copy-Item web/.env.example web/.env
 - EMBEDDING_MODEL=BAAI/bge-m3
 
 启动脚本会自动读取根目录 .env；Vite 会自动读取 web/.env。两个真实文件均已被 Git 忽略。
+
+会话检查点默认写入 `runtime/memory`。该目录包含医疗对话原文且已被 Git 忽略；生产环境需要另行配置加密、访问控制和数据保留策略。
 
 ### 4. 启动完整 Demo
 

@@ -5,6 +5,7 @@
 - [Quick Start](quick-start.md)：安装、环境变量、四服务启动、健康检查与故障排查
 - [Demo 使用说明](demo-guide.md)：三个固定案例、界面状态与五分钟讲解顺序
 - [系统架构](architecture.md)：组件、数据流、服务边界与安全不变量
+- [Phase 5 Memory Layer](phase-5-memory-layer.md)：会话恢复、Fact Memory 与追问去重
 - [产品设计](product-design.md)：MVP 方向、能力范围与路线
 
 ## 安全与核心验证

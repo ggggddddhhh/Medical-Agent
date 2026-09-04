@@ -22,7 +22,7 @@ test("Phase 4 adds only a Demo layer and no Clinical Pathway", async () => {
     new URL("../src/phase4/create-phase4-demo.js", import.meta.url),
     "utf8",
   );
-  assert.match(factory, /createPhase3Agent/);
+  assert.match(factory, /createPhase5Agent/);
   assert.doesNotMatch(factory, /SafetyCore|SemanticGate|PolicyEngine|LightRAG/);
 
   const packageJson = JSON.parse(await readFile(

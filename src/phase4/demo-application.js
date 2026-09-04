@@ -49,6 +49,24 @@ export class DemoApplication {
     };
   }
 
+  async resumeSession(sessionId) {
+    if (typeof this.#agent.resumeSession !== "function") {
+      throw demoError("MEMORY_NOT_AVAILABLE", "This Demo agent has no Memory Layer.");
+    }
+    return {
+      demoVersion: DEMO_APPLICATION_VERSION,
+      sessionId,
+      ...await this.#agent.resumeSession(sessionId),
+    };
+  }
+
+  getHistory(sessionId) {
+    if (typeof this.#agent.getHistory !== "function") {
+      throw demoError("MEMORY_NOT_AVAILABLE", "This Demo agent has no Memory Layer.");
+    }
+    return this.#agent.getHistory(sessionId);
+  }
+
   async handleMessage(sessionId, message) {
     if (typeof message !== "string" || message.trim().length === 0) {
       throw demoError("INVALID_MESSAGE", "message must be non-empty.");
