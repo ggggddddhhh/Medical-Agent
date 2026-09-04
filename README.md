@@ -1,110 +1,181 @@
 # Medical-Agent
 
-一个以安全裁决为核心、支持证据定位、多轮追问、工具调用和知识增强的医疗智能体 MVP。
+> **Safety-Constrained Multi-turn Medical AI Agent**
+
+[![Release](https://img.shields.io/github/v/release/ggggddddhhh/Medical-Agent?include_prereleases&label=release)](https://github.com/ggggddddhhh/Medical-Agent/releases)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Research Prototype](https://img.shields.io/badge/status-research%20prototype-orange.svg)](#limitations)
+
+Medical-Agent is a **research prototype** for building verifiable, safety-constrained medical assistants. It focuses on helping users understand the appropriate **next action** through structured evidence extraction, conservative risk routing, multi-turn clarification, persistent session memory, and read-only medical knowledge support.
+
+The project combines:
+
+- **LangGraph.js Agent Orchestration** for workflow and state-flow management;
+- an independent **Safety Core** as the only source of risk decisions;
+- **Multi-turn Memory** for session recovery and duplicate-question prevention;
+- **LightRAG Knowledge Support** for optional, source-backed health education;
+- a **React Demo UI** for inspecting the agent's state, trace, and safety boundaries.
 
 > [!WARNING]
-> 本项目是工程研究与比赛演示，不是医疗器械，不提供诊断、处方或个性化用药建议，也不能替代医生或急救服务。出现紧急症状时请立即联系当地急救服务。
+> This project is not a medical device and does not provide diagnosis, prescriptions, or individualized treatment. It cannot replace a clinician or emergency service. If emergency symptoms are present, contact local emergency services immediately.
 
 ![Medical-Agent React Demo](docs/images/react-web-demo.png)
 
-## 项目定位
+## Overview（项目定位）
 
-Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“患了什么病”。系统将确定性的 Node.js 安全核心与可替换的 Python AI/RAG 服务分离：模型负责结构化语义和知识检索，CaseState、风险等级、临床路径与最终安全裁决始终由 Node.js 掌握。
+Medical conversations are often incomplete, ambiguous, and multi-turn. A generic language model can lose track of what the user actually said, repeat questions, confuse another person's symptoms with the user's symptoms, or produce an answer that is more confident than the evidence supports.
 
-当前 MVP 仅支持成年人场景中的两个临床路径：
+Medical-Agent explores an alternative architecture:
 
-- 头痛（HEADACHE_V1）
-- 胸痛（CHEST_PAIN_V1）
+1. Locate evidence in the user's original text.
+2. Interpret linguistic attributes such as subject, polarity, certainty, and temporality.
+3. Map supported evidence to the existing clinical facts and pathway state.
+4. Let the Semantic Gate and Safety Core make conservative, deterministic routing decisions.
+5. Use LangGraph and Memory to plan the next turn without changing the risk decision.
+6. Optionally attach read-only knowledge context through the Python LightRAG service.
 
-比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo，Phase 5 已增加本地会话检查点与 Fact Memory，Phase 5.4 已将 LangGraph.js 设为默认 Planner Orchestrator，并保留 Legacy fallback。该状态不代表临床验证或真实世界部署许可。
+The current MVP is limited to adult-oriented HEADACHE_V1 and CHEST_PAIN_V1 pathways. It is intended for architecture research, safety evaluation, and competition demonstration—not clinical deployment or real patient data processing.
 
-项目适合用于医疗安全智能体架构研究、语义 Gate 评测、比赛演示和失效安全设计验证；不适合直接处理真实患者数据，也不能作为临床诊断或急救决策系统部署。
+## Architecture
 
-## 核心能力
+### Logical view
 
-- Evidence Span Finder：先定位用户原文证据，再形成 Clinical Fact
-- Linguistic Assertion：独立判断主体、否定、确定性、时态、引用与假设
-- Semantic Gate：对 ACCEPT / UNCERTAIN / REJECT 进行保守裁决
-- Multi-turn Agent Loop：追问后更新同一份 CaseState 并重新评估安全
-- Memory Layer：持久化 sessionId、历史消息与 CaseState 快照，支持安全恢复
-- LangGraph.js Planner Orchestrator：以 legacy / shadow / langgraph 三态渐进接管 Fact Memory、问题规划和 pending 状态
-- Question Planner：根据 Fact Memory 过滤已回答字段，避免重复追问
-- Safety Core：危险信号优先、风险单调、工具失败安全降级
-- Response Layer：把内部决策转换为受约束的用户回复
-- LightRAG Knowledge Service：仅提供健康教育上下文和审核来源
-- Decision Trace：保留结构化决策记录，不记录隐藏思维链
-- React Demo：展示风险、CaseState、Semantic Gate、Safety Core 与 RAG 状态
+~~~mermaid
+flowchart TB
+    U[User] --> UI[React Demo UI]
+    UI --> LG[LangGraph.js Orchestrator]
+    LG --> SC[Safety Core]
+    SC --> ML[Memory Layer]
+    ML --> RAG[LightRAG Knowledge Support]
+~~~
 
-## 架构
+This is a product-level view of the main collaboration path. In the implementation, Memory is a persistence and planning aid, while LightRAG is an optional read-only support service. Neither can override the Safety Core.
+
+### Runtime components
 
 ~~~mermaid
 flowchart LR
-    U[用户 / React Demo] --> D[Node.js Demo API]
-    D --> M[Phase 5 Memory Layer]
-    M --> A[Multi-turn Agent Loop]
-    M -. 本地检查点 .-> F[runtime/memory]
-    A --> S[Semantic Extraction]
-    S --> G[Semantic Gate]
-    G --> C[CaseState + Safety Core]
-    C --> P[Clinical Pathway]
-    P --> L[LangGraph Planner / 可回退]
-    L --> R[Response Layer]
-    R --> U
-    S -. HTTP .-> AI[Python AI Service]
-    R -. 仅知识支持 .-> K[Python LightRAG Service]
-    K --> E[BAAI/bge-m3 Embedding API]
+    U[User] --> UI[React + Vite Demo]
+    UI --> API[Node.js Demo API]
+    API --> LG[LangGraph Orchestrator]
+    LG --> EX[Semantic Extraction]
+    EX --> SG[Semantic Gate]
+    SG --> CS[CaseState]
+    CS --> SC[Safety Core]
+    SC --> CP[Clinical Pathway]
+    CP --> QP[Question Planner]
+    QP --> RL[Response Layer]
+    RL --> UI
+
+    LG <--> MEM[Session + Fact Memory]
+    MEM --> CK[runtime checkpoints]
+    RL -. optional knowledge context .-> KR[Python LightRAG Service]
+    KR --> EMB[BAAI/bge-m3 Embedding API]
+    EX -. model-assisted extraction .-> AI[Python AI Service]
 ~~~
 
-Node.js 是临床决策权威；Memory 与 Python 服务均不能修改 riskLevel、Disposition 或 Safety Core 结果。详细边界见 [架构说明](docs/architecture.md) 和 [Phase 5 Memory Layer](docs/phase-5-memory-layer.md)。
+The Node.js Agent Core owns CaseState, Semantic Gate, Clinical Pathway, Safety Core, risk disposition, Decision Trace, and Response Layer. Python services are isolated behind HTTP APIs: the AI service supports extraction, and LightRAG supplies knowledge context only.
+
+See [architecture.md](docs/architecture.md) for component boundaries and [phase-5-memory-layer.md](docs/phase-5-memory-layer.md) for session and fact memory details.
+
+## Key Features
+
+| Capability | What it provides |
+| --- | --- |
+| **Evidence-grounded extraction** | Requires evidence from the user's original words before a fact can be accepted. |
+| **Linguistic assertion analysis** | Tracks subject, negation, certainty, temporality, quotation, hypotheticals, and corrections. |
+| **Conservative Semantic Gate** | Routes facts through ACCEPT, UNCERTAIN, or REJECT without allowing unsupported upgrades. |
+| **Safety Core** | Produces the final risk decision and prioritizes red-flag routing. |
+| **LangGraph orchestration** | Coordinates state flow, checkpoint recovery, fact reconciliation, and question planning. |
+| **Multi-turn memory** | Restores sessions and retains confirmed facts, answered fields, pending questions, and decision trace. |
+| **Duplicate-question prevention** | Filters already answered fields before planning the next clarification. |
+| **Response Layer** | Converts structured decisions into constrained, user-readable safety responses. |
+| **LightRAG support** | Adds optional medical education context and sources without participating in risk decisions. |
+| **React demo** | Visualizes the conversation, risk level, CaseState, Safety Core, Semantic Gate, memory, trace, and sources. |
+
+The legacy orchestrator remains available as a fallback. Configure AGENT_ORCHESTRATOR=legacy, shadow, or langgraph; the default is langgraph.
+
+## Safety Design
+
+Safety boundaries are explicit and testable:
+
+- **LangGraph only orchestrates.** It manages workflow transitions, checkpointing, and planner state; it cannot decide or rewrite clinical risk.
+- **Safety Core is the sole risk authority.** riskLevel, disposition, red-flag routing, and final safety decisions remain in the Node.js core.
+- **Semantic Gate controls fact admission.** Unsupported, ambiguous, contradicted, quoted, hypothetical, or incorrectly attributed facts must not be silently accepted.
+- **Clarification is safer than guessing.** Missing high-risk information enters UNCERTAIN and triggers a targeted question rather than an unsupported ACCEPT or REJECT.
+- **RAG is read-only.** LightRAG provides explanation material and sources; it cannot modify CaseState, risk level, pathway outcome, or Safety Core results.
+- **Failures degrade safely.** AI, embedding, checkpoint, planner, or RAG failures preserve the deterministic safety response and can fall back to Legacy orchestration.
+- **Decision Trace is auditable.** The system records structured events and evidence references, not hidden chain-of-thought.
+
+## Demo（Demo 展示）
+
+The React demo is designed for an evaluator to see the complete loop in one screen:
+
+- **Three-column layout:** case selection and session history on the left, conversation in the center, and Agent status plus Memory/Trace panels on the right;
+- **Multi-turn clarification:** the agent asks for missing information, updates the same session, and reevaluates safety after the user's reply;
+- **Memory recovery:** session ID, confirmed facts, answered fields, pending question, and CaseState snapshots can be restored;
+- **RAG transparency:** the UI shows whether knowledge support was called and which sources were returned;
+- **Safety visibility:** risk level, Semantic Gate result, Safety Core status, and fallback state remain inspectable.
+
+| Demo case | Expected routing | Knowledge behavior |
+| --- | --- | --- |
+| Ordinary headache | SELF_MONITOR after appropriate clarification | Optional headache education |
+| Ambiguous chest pain | URGENT_SAME_DAY or clarification while information is incomplete | Optional chest-pain education |
+| High-risk chest pain | EMERGENCY_NOW | Safety response is not delayed by RAG |
+
+See [Demo Guide](docs/demo-guide.md) for the recommended presentation flow.
 
 ## Quick Start
 
-### 1. 环境要求
+### Prerequisites
 
-- Node.js 22 或更高版本
-- Python 3.11 或更高版本（推荐 3.12）
-- DeepSeek API Key
-- 支持 OpenAI-compatible embeddings 的 BAAI/bge-m3 服务
+- Git
+- Node.js 22+
+- Python 3.11+ (Python 3.12 recommended)
+- A DeepSeek API key for the Python AI service
+- An OpenAI-compatible embedding endpoint serving BAAI/bge-m3 with 1024-dimensional output
 
-### 2. 安装依赖
+### 1. Clone and install
 
 ~~~powershell
-git clone <your-repository-url>
+git clone https://github.com/ggggddddhhh/Medical-Agent.git
 cd Medical-Agent
 
 npm ci
 npm ci --prefix web
 
 py -3.12 -m venv .venv
-..venvScriptspython -m pip install --upgrade pip
-..venvScriptspython -m pip install -r python_knowledge_service/requirements.txt
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r python_knowledge_service/requirements.txt
 ~~~
 
-macOS/Linux 使用 python3 创建虚拟环境，并将解释器路径替换为 .venv/bin/python。
+On macOS/Linux, use python3 -m venv .venv, then .venv/bin/python -m pip ....
 
-### 3. 配置环境变量
+### 2. Configure environment variables
 
 ~~~powershell
 Copy-Item .env.example .env
 Copy-Item web/.env.example web/.env
 ~~~
 
-至少填写：
+At minimum, edit the root .env with:
 
-- DEEPSEEK_API_KEY
-- EMBEDDING_BASE_URL
-- EMBEDDING_API_KEY
-- EMBEDDING_MODEL=BAAI/bge-m3
+~~~dotenv
+DEEPSEEK_API_KEY=your-key
+DEEPSEEK_BASE_URL=https://api.deepseek.com
 
-`AGENT_ORCHESTRATOR` 默认为 `langgraph`，负责经过批准的 Pathway 追问。仍可切换为 `legacy`，或使用 `shadow` 只做 Planner 对比；任一 LangGraph 编排异常都会自动回退 Legacy 结果。
+EMBEDDING_BASE_URL=https://your-provider.example/v1
+EMBEDDING_API_KEY=your-key
+EMBEDDING_MODEL=BAAI/bge-m3
 
-启动脚本会自动读取根目录 .env；Vite 会自动读取 web/.env。两个真实文件均已被 Git 忽略。
+AGENT_ORCHESTRATOR=langgraph
+~~~
 
-会话检查点默认写入 `runtime/memory`。该目录包含医疗对话原文且已被 Git 忽略；生产环境需要另行配置加密、访问控制和数据保留策略。
+Never commit .env, web/.env, API keys, runtime checkpoints, or real patient data. Both environment files and runtime data are ignored by Git. See [.env.example](.env.example) and [web/.env.example](web/.env.example) for the available settings.
 
-### 4. 启动完整 Demo
+### 3. Start the services
 
-在四个终端中依次运行：
+Open four terminals and keep each process running:
 
 ~~~powershell
 npm run start:python-ai
@@ -113,105 +184,83 @@ npm run start:demo
 npm run start:web
 ~~~
 
-| 服务 | 默认地址 | 作用 |
+| Service | Address | Role |
 | --- | --- | --- |
-| React Web | http://127.0.0.1:5173 | 比赛展示界面 |
-| Python AI | http://127.0.0.1:8001 | 模型调用与语义抽取 |
-| Python LightRAG | http://127.0.0.1:8002 | 医学知识检索 |
-| Node.js Demo API | http://127.0.0.1:8003 | 完整 Agent 与 Demo API |
+| React Web Demo | http://127.0.0.1:5173 | Presentation UI |
+| Python AI Service | http://127.0.0.1:8001 | Model-assisted semantic extraction |
+| Python LightRAG | http://127.0.0.1:8002 | Read-only medical knowledge retrieval |
+| Node.js Demo API | http://127.0.0.1:8003 | Agent Core and Demo API |
 
-浏览器打开 http://127.0.0.1:5173。首次启动知识服务时会建立本地索引，耗时取决于模型服务；索引写入被忽略的 runtime/lightrag。
+Open <http://127.0.0.1:5173> in a browser. The first LightRAG startup may build a local index under the ignored runtime/lightrag directory.
 
-更完整的 Windows、macOS/Linux 步骤、健康检查和故障排查见 [Quick Start](docs/quick-start.md)。
-
-## Demo 展示
-
-三栏 React 界面把完整处理链放在同一屏：左侧选择固定案例，中间展示用户输入、Agent 回复与真实多轮追问，右侧同步显示 riskLevel、CaseState、Safety Core、Semantic Gate 和 RAG 来源。页面顶部截图即为当前比赛 Demo。
-
-| 案例 | 预期结果 | RAG 行为 |
-| --- | --- | --- |
-| 普通头痛 | SELF_MONITOR | 最终处置后提供健康教育 |
-| 模糊胸痛 | URGENT_SAME_DAY | 最终处置后提供胸痛知识 |
-| 高风险胸痛 | EMERGENCY_NOW | 不等待 RAG，立即安全升级 |
-
-操作脚本和评委讲解顺序见 [Demo 使用说明](docs/demo-guide.md)。
-
-## Evaluation
-
-所有结果均来自仓库中的封存数据和自动化测试，不是临床有效性结论。Phase 2A.4 使用 24 条全新 Blind Holdout，并对 6 条高风险病例重复 3 次；随后使用另一组 12 条独立 Subject Ambiguity Holdout 完成晋级验证。
-
-| 阶段 | Critical Semantic Miss | Unsupported ACCEPT | Red Flag Safe Routing | Clarification Recall | Gate Drift | Holdout |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Phase 2A.4 Blind | 2 / 36 | 0 | 30 / 35（85.71%） | 10 / 13（76.92%） | 0 / 6 | 21 / 24（87.50%） |
-| Subject Promotion | 0 | 0 | 17 / 17（100%） | 31 / 31（100%） | 0 / 4 | 12 / 12；20 / 20 executions |
-
-Subject Promotion 的语言属性聚合结果：
-
-| Evidence Span | Subject | Negation | Certainty | Temporality | Concept Mapping |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 30/34（88.24%） | 30/34（88.24%） | 30/34（88.24%） | 30/34（88.24%） | 29/34（85.29%） | 25/31（80.65%） |
-
-该 Promotion 同时达到 Uncertainty Safe Routing 31/31、Hallucination Rejection 22/22，最终判定为 COMPETITION_READY_FOR_PHASE_2B。Verifier Accuracy 仅为 3/19（15.79%），因此 Verifier 继续只作为辅助证据；无原文证据时，即使 Verifier 支持也不能升级 ACCEPT。
-
-详细数据见 [Phase 2A.4 报告](docs/phase-2a4-competition-semantic-repair.md)、[Subject Promotion 报告](docs/phase-2a-subject-promotion.md)及 [封存评测结果](evaluation/results/deepseek-v4-flash-phase-2a-promotion.json)。
-
-## 测试
-
-离线测试不需要真实 API Key：
+### 4. Verify health and tests
 
 ~~~powershell
+Invoke-RestMethod http://127.0.0.1:8001/health
+Invoke-RestMethod http://127.0.0.1:8002/health
+Invoke-RestMethod http://127.0.0.1:8003/health
+
 npm run test:all
-npm run test:coverage
 ~~~
 
-真实 Embedding 与 LightRAG 闭环需要完成 .env 配置：
+For a real embedding and LightRAG smoke test after configuring credentials:
 
 ~~~powershell
 npm run test:rag:live
 ~~~
 
-当前验证基线：
+For full operating instructions and troubleshooting, see [docs/quick-start.md](docs/quick-start.md).
 
-- Node.js：312/312
-- Python：19/19
-- LangGraph Phase 5.1 prototype：6/6
-- React/Vitest：8/8
-- Phase 1 Safety Invariants：10/10
-- Node.js 行覆盖率：93.57%
+## Evaluation
 
-## 目录结构
+The following results are repository validation baselines, not clinical efficacy claims:
+
+| Area | Result |
+| --- | ---: |
+| Node.js tests | **326/326 passed** |
+| Python tests | **19/19 passed** |
+| React tests | **8/8 passed** |
+| Phase 5.1 LangGraph prototype | **6/6 passed** |
+| Phase 1 Safety Invariants | **10/10 passed** |
+
+Additional semantic evaluation data is documented in [Phase 2A.4](docs/phase-2a4-competition-semantic-repair.md), [Subject Promotion](docs/phase-2a-subject-promotion.md), and the frozen [evaluation results](evaluation/results/deepseek-v4-flash-phase-2a-promotion.json).
+
+The Phase 2A competition checkpoint was recorded as COMPETITION_READY_FOR_PHASE_2B. This is an engineering milestone, not a clinical validation or deployment approval.
+
+## Project Structure
 
 ~~~text
 .
-├─ src/                         Node.js Agent Core 与 API 编排
-├─ python_ai_service/           Python 模型传输服务
-├─ python_knowledge_service/    LightRAG、Embedding 与知识库
-├─ web/                         React + Vite Demo
-├─ evaluation/                  数据集、冻结清单与脱敏结果
-├─ test/                        Node.js 自动化测试
-├─ scripts/                     启动、评测与 smoke test
-├─ docs/                        架构、使用、安全与验证文档
-└─ .github/workflows/           GitHub Actions
+├── src/                         Node.js Agent Core, Safety Core, pathways, and APIs
+├── python_ai_service/           Python model transport service
+├── python_knowledge_service/    LightRAG, embeddings, and medical knowledge base
+├── web/                         React + Vite demo UI
+├── evaluation/                  Frozen datasets and de-identified evaluation results
+├── test/                        Node.js automated tests
+├── scripts/                     Startup, evaluation, and smoke-test scripts
+├── docs/                        Architecture, Quick Start, Demo, and validation reports
+└── .github/workflows/           GitHub Actions configuration
 ~~~
 
-[文档导航](docs/README.md) 汇总了产品、安全、架构、Demo 和各阶段验证报告。
+## Limitations
 
-## 安全与隐私
+- The current MVP covers only a small number of adult-oriented pathways.
+- Outputs are safety-routing and health-education responses, not diagnoses or treatment plans.
+- Local session checkpoints contain conversation data and require encryption, access control, and retention policies before any controlled deployment.
+- The evaluation suite is an engineering validation set, not a substitute for clinical, regulatory, privacy, or usability validation.
+- Do not use this repository with identifiable patient data.
 
-- 不要提交 .env、API Key、runtime/、真实患者数据或带身份信息的日志
-- Demo 请求与响应使用 Cache-Control: no-store
-- RAG 请求不包含患者原文、CaseState 或风险结论
-- RAG 无结果或服务异常时不编造内容，保留原始安全响应
-- 高风险确定性结果不会因模型、工具或知识服务失败而降级
+## Security and Privacy
 
-安全问题请通过 GitHub 私密安全报告渠道提交，详见 [SECURITY.md](SECURITY.md)。
+- Do not commit .env, API keys, runtime checkpoints, raw logs, or identifiable health data.
+- RAG requests are isolated from patient text, CaseState, and risk conclusions.
+- RAG and model failures preserve the original safety response and do not silently invent knowledge.
+- Security concerns should be reported privately according to [SECURITY.md](SECURITY.md).
 
-## 贡献
+## Contributing
 
-提交改动前必须补充相关测试并确保全部验证通过；每次独立改动应对应一个 Git commit。详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+Contributions should include relevant tests and documentation updates. Run the complete validation suite before submitting a change. Each independent change should have a corresponding Git commit; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 发布状态与许可证
+## License
 
-发布前审计见 [GitHub 发布检查报告](docs/github-release-report.md)和[最终发布清单](docs/github-release-checklist.md)。
-
-本项目采用 [Apache License 2.0](LICENSE)。许可证不改变本项目“非医疗器械、非诊断工具、不得替代专业医疗服务”的产品安全边界。
+This project is available under the [Apache License 2.0](LICENSE). The license does not change the project's safety boundary: Medical-Agent is a research prototype, not a medical device or diagnostic tool.
