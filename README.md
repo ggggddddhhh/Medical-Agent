@@ -95,3 +95,16 @@ Phase 3.1 使用 `EMBEDDING_BASE_URL`、`EMBEDDING_API_KEY` 和 `EMBEDDING_MODEL
 - [Phase 4 Demo Architecture and Usage](docs/phase-4-demo.md)
 
 Phase 4 在现有 Agent 外增加独立 Demo HTTP 层，提供普通头痛、模糊胸痛和高风险胸痛三个固定案例，也支持使用同一个 sessionId 进行自由多轮交互。Demo 与 RAG 均不能修改 CaseState 或风险裁决。
+
+## React Web Demo
+
+- [React Web Demo Architecture and Usage](docs/react-web-demo.md)
+
+比赛展示界面位于独立的 web/ React + Vite 应用，通过 /api 代理调用 Phase 4 Demo API。它提供自由多轮聊天、三个固定案例、风险与追问状态、RAG 调用状态和来源展示，不直接访问或修改 Node.js 临床核心。
+
+~~~powershell
+npm run start:demo
+npm run start:web
+~~~
+
+浏览器打开 http://127.0.0.1:5173。
