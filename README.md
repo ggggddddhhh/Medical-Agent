@@ -16,7 +16,7 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 - 头痛（HEADACHE_V1）
 - 胸痛（CHEST_PAIN_V1）
 
-比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo，Phase 5 已增加本地会话检查点与 Fact Memory，Phase 5.2 提供可回退的 LangGraph.js Planner 渐进迁移。该状态不代表临床验证或真实世界部署许可。
+比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo，Phase 5 已增加本地会话检查点与 Fact Memory，Phase 5.4 已将 LangGraph.js 设为默认 Planner Orchestrator，并保留 Legacy fallback。该状态不代表临床验证或真实世界部署许可。
 
 项目适合用于医疗安全智能体架构研究、语义 Gate 评测、比赛演示和失效安全设计验证；不适合直接处理真实患者数据，也不能作为临床诊断或急救决策系统部署。
 
