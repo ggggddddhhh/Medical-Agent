@@ -12,8 +12,14 @@ const bundled = join(
   "python",
   process.platform === "win32" ? "python.exe" : "bin/python",
 );
+const projectVenv = join(
+  process.cwd(),
+  ".venv",
+  process.platform === "win32" ? "Scripts/python.exe" : "bin/python",
+);
 const candidates = [
   process.env.PYTHON_EXECUTABLE,
+  existsSync(projectVenv) ? projectVenv : null,
   existsSync(bundled) ? bundled : null,
   process.platform === "win32" ? "python" : "python3",
 ].filter(Boolean);

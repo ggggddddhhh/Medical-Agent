@@ -29,7 +29,10 @@ test("Phase 4 adds only a Demo layer and no Clinical Pathway", async () => {
     new URL("../package.json", import.meta.url),
     "utf8",
   ));
-  assert.equal(packageJson.scripts["start:demo"], "node scripts/run-phase4-demo-api.js");
+  assert.equal(
+    packageJson.scripts["start:demo"],
+    "node --env-file-if-exists=.env scripts/run-phase4-demo-api.js",
+  );
 });
 
 test("Phase 4 document records architecture, API, cases and safety validation", async () => {

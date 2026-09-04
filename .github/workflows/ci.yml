@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Web dependencies
+        run: npm ci --prefix web
+
+      - name: Install Python knowledge dependencies
+        run: python -m pip install -r python_knowledge_service/requirements.txt
+
+      - name: Run complete offline validation
+        run: npm run test:all
+
+      - name: Run Node.js coverage
+        run: npm run test:coverage
