@@ -18,6 +18,8 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 
 比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo。该状态不代表临床验证或真实世界部署许可。
 
+项目适合用于医疗安全智能体架构研究、语义 Gate 评测、比赛演示和失效安全设计验证；不适合直接处理真实患者数据，也不能作为临床诊断或急救决策系统部署。
+
 ## 核心能力
 
 - Evidence Span Finder：先定位用户原文证据，再形成 Clinical Fact
@@ -111,7 +113,9 @@ npm run start:web
 
 更完整的 Windows、macOS/Linux 步骤、健康检查和故障排查见 [Quick Start](docs/quick-start.md)。
 
-## Demo 案例
+## Demo 展示
+
+三栏 React 界面把完整处理链放在同一屏：左侧选择固定案例，中间展示用户输入、Agent 回复与真实多轮追问，右侧同步显示 riskLevel、CaseState、Safety Core、Semantic Gate 和 RAG 来源。页面顶部截图即为当前比赛 Demo。
 
 | 案例 | 预期结果 | RAG 行为 |
 | --- | --- | --- |
@@ -120,6 +124,25 @@ npm run start:web
 | 高风险胸痛 | EMERGENCY_NOW | 不等待 RAG，立即安全升级 |
 
 操作脚本和评委讲解顺序见 [Demo 使用说明](docs/demo-guide.md)。
+
+## Evaluation
+
+所有结果均来自仓库中的封存数据和自动化测试，不是临床有效性结论。Phase 2A.4 使用 24 条全新 Blind Holdout，并对 6 条高风险病例重复 3 次；随后使用另一组 12 条独立 Subject Ambiguity Holdout 完成晋级验证。
+
+| 阶段 | Critical Semantic Miss | Unsupported ACCEPT | Red Flag Safe Routing | Clarification Recall | Gate Drift | Holdout |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Phase 2A.4 Blind | 2 / 36 | 0 | 30 / 35（85.71%） | 10 / 13（76.92%） | 0 / 6 | 21 / 24（87.50%） |
+| Subject Promotion | 0 | 0 | 17 / 17（100%） | 31 / 31（100%） | 0 / 4 | 12 / 12；20 / 20 executions |
+
+Subject Promotion 的语言属性聚合结果：
+
+| Evidence Span | Subject | Negation | Certainty | Temporality | Concept Mapping |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 30/34（88.24%） | 30/34（88.24%） | 30/34（88.24%） | 30/34（88.24%） | 29/34（85.29%） | 25/31（80.65%） |
+
+该 Promotion 同时达到 Uncertainty Safe Routing 31/31、Hallucination Rejection 22/22，最终判定为 COMPETITION_READY_FOR_PHASE_2B。Verifier Accuracy 仅为 3/19（15.79%），因此 Verifier 继续只作为辅助证据；无原文证据时，即使 Verifier 支持也不能升级 ACCEPT。
+
+详细数据见 [Phase 2A.4 报告](docs/phase-2a4-competition-semantic-repair.md)、[Subject Promotion 报告](docs/phase-2a-subject-promotion.md)及 [封存评测结果](evaluation/results/deepseek-v4-flash-phase-2a-promotion.json)。
 
 ## 测试
 
@@ -177,6 +200,6 @@ npm run test:rag:live
 
 ## 发布状态与许可证
 
-发布前审计见 [GitHub 发布检查报告](docs/github-release-report.md)。
+发布前审计见 [GitHub 发布检查报告](docs/github-release-report.md)和[最终发布清单](docs/github-release-checklist.md)。
 
-仓库目前尚未附带开源许可证。公开可见不等于授予使用、修改或分发权；正式发布前请由仓库所有者选择并加入 MIT、Apache-2.0 或其他合适许可证。
+本项目采用 [Apache License 2.0](LICENSE)。许可证不改变本项目“非医疗器械、非诊断工具、不得替代专业医疗服务”的产品安全边界。

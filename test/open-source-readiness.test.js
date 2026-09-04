@@ -10,17 +10,24 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
 test("public repository has complete entry, architecture, quick-start and demo documentation", async () => {
   const required = [
-    ["README.md", ["Quick Start", "docs/architecture.md", "docs/demo-guide.md", "SECURITY.md"]],
+    ["README.md", ["项目定位", "docs/architecture.md", "Demo 展示", "Evaluation", "COMPETITION_READY_FOR_PHASE_2B", "Apache License 2.0"]],
     ["docs/architecture.md", ["Semantic Gate", "CaseState", "BAAI/bge-m3", "安全不变量"]],
     ["docs/quick-start.md", ["npm ci --prefix web", "start:python-ai", "start:python-knowledge", "start:demo", "start:web"]],
     ["docs/demo-guide.md", ["普通头痛", "模糊胸痛", "高风险胸痛", "UNAVAILABLE"]],
-    ["docs/github-release-report.md", ["API Key", "本地绝对路径", "READY_WITH_OWNER_ACTIONS"]],
+    ["docs/github-release-report.md", ["API Key", "本地绝对路径", "READY_FOR_GITHUB_WITH_EXTERNAL_ACTIONS"]],
+    ["docs/github-release-checklist.md", ["Apache License 2.0", "不执行 git push"]],
   ];
 
   for (const [path, markers] of required) {
     const content = await read(path);
     for (const marker of markers) assert.match(content, new RegExp(marker), `${path} missing ${marker}`);
   }
+
+  const license = await read("LICENSE");
+  assert.match(license, /Apache License\s+Version 2\.0, January 2004/);
+  assert.match(license, /END OF TERMS AND CONDITIONS/);
+  const packageJson = JSON.parse(await read("package.json"));
+  assert.equal(packageJson.license, "Apache-2.0");
 });
 
 test("environment templates contain no credentials and launchers load .env plus project .venv", async () => {

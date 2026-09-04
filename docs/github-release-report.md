@@ -2,7 +2,7 @@
 
 检查日期：2026-09-04
 
-结论：代码与工作树内容可整理为公开仓库，但在正式公开前仍需仓库所有者完成许可证选择、提交作者邮箱隐私确认和 GitHub remote 配置。
+结论：代码、许可证与工作树内容已具备公开条件；正式公开前仍需仓库所有者确认提交作者邮箱隐私并配置 GitHub remote。
 
 ## 1. 审计范围
 
@@ -22,6 +22,7 @@
 | 用户邮箱正文 | 通过 | 当前跟踪内容与 Git 历史未发现邮箱地址 |
 | 本地绝对路径 | 通过 | 当前跟踪内容与 Git 历史未发现用户目录或工作区绝对路径 |
 | 患者隐私数据 | 通过 | 固定案例与评测结果使用工程测试数据；脱敏结果测试禁止原文、prompt 与 hidden reasoning |
+| 开源许可证 | 通过 | 根目录使用 Apache License 2.0，package.json 声明 Apache-2.0 |
 | 提交作者邮箱 | 需要确认 | Git commit metadata 中存在 g***@outlook.com，推送后可能公开 |
 
 提交作者邮箱属于 Git 元数据，不会被 .gitignore 移除。若不希望公开，应在首次 push 前决定是否使用 GitHub noreply 邮箱并重写历史；历史重写属于破坏性操作，本次未自动执行。
@@ -62,9 +63,8 @@
 
 ### 必须完成
 
-1. 选择并添加 LICENSE。若希望宽松开源，可评估 Apache-2.0 或 MIT；许可证是法律选择，本次未代替所有者决定。
-2. 确认 commit author 邮箱是否可以公开；如不可以，先配置 GitHub noreply 邮箱并评估历史重写。
-3. 在 GitHub 创建仓库并配置 origin remote；当前本地仓库没有 remote。
+1. 确认 commit author 邮箱是否可以公开；如不可以，先配置 GitHub noreply 邮箱并评估历史重写。
+2. 在 GitHub 创建仓库并配置 origin remote；当前本地仓库没有 remote。
 
 ### 建议完成
 
@@ -86,6 +86,6 @@
 
 ## 8. 发布判定
 
-当前判定：READY_WITH_OWNER_ACTIONS。
+当前判定：READY_FOR_GITHUB_WITH_EXTERNAL_ACTIONS。
 
-从代码与内容安全角度，没有发现阻止公开的密钥、路径、PII 或临时文件；LICENSE、作者邮箱隐私和 remote 是正式公开前仍需所有者确认的发布动作。
+从代码与内容安全角度，没有发现阻止公开的密钥、路径、PII 或临时文件；Apache-2.0 已加入。作者邮箱隐私和 remote 是正式公开前仍需所有者完成的外部动作。

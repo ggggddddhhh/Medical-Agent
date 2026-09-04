@@ -12,6 +12,7 @@
 - [Safety Invariants](safety-invariants.md)
 - [Phase 1 Core Validation](phase-1-validation-report.md)
 - [GitHub 发布检查报告](github-release-report.md)
+- [GitHub 最终发布清单](github-release-checklist.md)
 
 ## 语义与多轮 Agent
 
