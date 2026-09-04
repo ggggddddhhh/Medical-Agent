@@ -207,6 +207,27 @@ export {
   QuestionPlanner,
 } from "./phase5/question-planner.js";
 export {
+  AGENT_ORCHESTRATOR_MODES,
+  resolveAgentOrchestratorMode,
+} from "./phase5/orchestrator-mode.js";
+export {
+  PHASE_52_PLANNER_STATE_VERSION,
+  Phase52PlannerState,
+} from "./phase5/langgraph-planner-state.js";
+export {
+  LANGGRAPH_QUESTION_PLANNER_VERSION,
+  createLangGraphQuestionPlanner,
+  plannerInput,
+} from "./phase5/langgraph-question-planner.js";
+export {
+  PLANNER_ORCHESTRATED_LOOP_VERSION,
+  PlannerOrchestratedLoop,
+} from "./phase5/planner-orchestrated-loop.js";
+export {
+  PLANNER_PENDING_BRIDGE_VERSION,
+  PlannerPendingBridge,
+} from "./phase5/planner-pending-bridge.js";
+export {
   MEMORY_LAYER_VERSION,
   MemoryLayerAgent,
 } from "./phase5/memory-layer-agent.js";

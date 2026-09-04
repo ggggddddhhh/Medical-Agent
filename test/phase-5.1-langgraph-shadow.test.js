@@ -23,7 +23,7 @@ test("Phase 5.1 Shadow leaves Safety Core, Semantic Gate and Pathways unchanged"
   }
 });
 
-test("LangGraph dependencies stay isolated from the production package and Legacy factory", async () => {
+test("Phase 5.2 promotes pinned LangGraph dependencies while Legacy remains the default", async () => {
   const rootPackage = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   const prototypePackage = JSON.parse(await readFile(
     new URL("../prototypes/phase5-orchestrator/package.json", import.meta.url),
@@ -31,12 +31,15 @@ test("LangGraph dependencies stay isolated from the production package and Legac
   ));
   const factory = await readFile(new URL("../src/phase5/create-phase5-agent.js", import.meta.url), "utf8");
 
-  assert.equal(rootPackage.dependencies, undefined);
-  assert.equal(rootPackage.devDependencies, undefined);
+  assert.equal(rootPackage.dependencies["@langchain/langgraph"], "1.4.13");
+  assert.equal(rootPackage.dependencies["@langchain/core"], "1.2.9");
+  assert.equal(rootPackage.dependencies.zod, "4.5.4");
   assert.equal(prototypePackage.dependencies["@langchain/langgraph"], "1.4.13");
   assert.equal(prototypePackage.dependencies["@langchain/core"], "1.2.9");
   assert.match(factory, /MemoryLayerAgent/);
-  assert.doesNotMatch(factory, /LangGraph|ShadowOrchestrator|phase5-orchestrator/);
+  assert.match(factory, /mode === "legacy"/);
+  assert.match(factory, /PlannerOrchestratedLoop/);
+  assert.doesNotMatch(factory, /phase5-orchestrator/);
 });
 
 test("Phase 5.1 source is explicitly Shadow-only and exposes required comparison states", async () => {

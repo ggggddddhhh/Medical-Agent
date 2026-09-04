@@ -13,17 +13,18 @@ test("Phase 2C keeps the validated Core and Phase 2B orchestration byte-for-byte
   }
 });
 
-test("Phase 2C adds no RAG runtime, model change, dependency or Clinical Pathway", async () => {
-  const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
-  assert.equal(packageJson.dependencies, undefined);
-  assert.equal(packageJson.devDependencies, undefined);
-
+test("Phase 2C owns no RAG runtime, model change, LangGraph integration or Clinical Pathway", async () => {
   const protocols = (await readdir(new URL("../src/protocols", import.meta.url)))
     .filter((file) => file.endsWith(".js") && !["index.js", "extraction-helpers.js"].includes(file));
   assert.deepEqual(protocols.sort(), ["chest-pain.js", "headache.js"]);
 
   const phase2cFiles = await readdir(new URL("../src/phase2c", import.meta.url));
   assert.equal(phase2cFiles.some((file) => /rag|embedding|retriever/i.test(file)), false);
+  const phase2cSource = (await Promise.all(phase2cFiles
+    .filter((file) => file.endsWith(".js"))
+    .map((file) => readFile(new URL(`../src/phase2c/${file}`, import.meta.url), "utf8"))))
+    .join("\n");
+  assert.doesNotMatch(phase2cSource, /@langchain|StateGraph|MemorySaver/);
   const startup = await readFile(
     new URL("../scripts/run-phase-2b-agent-api.js", import.meta.url),
     "utf8",

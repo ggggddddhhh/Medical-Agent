@@ -34,6 +34,7 @@ cd Medical-Agent
 ### Windows PowerShell
 
 ~~~powershell
+npm ci
 npm ci --prefix web
 
 py -3.12 -m venv .venv
@@ -44,6 +45,7 @@ py -3.12 -m venv .venv
 ### macOS/Linux
 
 ~~~bash
+npm ci
 npm ci --prefix web
 
 python3 -m venv .venv
@@ -85,6 +87,14 @@ EMBEDDING_BASE_URL 可以是 API 的 v1 基地址，也可以直接以 /embeddin
 LIGHTRAG_LLM_API_KEY 留空时会回退使用 DEEPSEEK_API_KEY。不要提交填好的 .env 或 web/.env。
 
 Phase 5 默认把会话检查点写入 `runtime/memory`。可通过 `MEMORY_STORAGE_DIR` 更换目录；其中包含医疗对话原文，只应保存在受控环境中，且不能提交到 Git。
+
+Phase 5.2 默认保持 Legacy 流程：
+
+~~~dotenv
+AGENT_ORCHESTRATOR=legacy
+~~~
+
+可选值为 `legacy`、`shadow`、`langgraph`。建议先使用 `shadow` 观察 Planner 对比；`langgraph` 只接管 Fact Memory reconcile、Question Planner 和经过既有 Clinical Pathway 校验的 pending question。配置变更后需要重启 Node.js Demo API。
 
 ## 5. 启动服务
 

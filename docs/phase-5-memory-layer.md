@@ -62,3 +62,7 @@ Question Planner 按以下顺序工作：当前未解决 clarification、成人�
 ## Phase 5.1 Shadow Prototype
 
 后续 LangGraph.js 迁移原型见 `docs/phase-5.1-langgraph-shadow.md`。该原型仅执行 StateGraph checkpoint、Fact Memory/Question Planner 编排和 Legacy 对比，不接入当前 `createPhase5Agent()`，也不改变本文件描述的 Legacy Memory Layer。
+
+## Phase 5.2 渐进迁移
+
+渐进迁移设计见 `docs/phase-5.2-langgraph-progressive-migration.md`。默认仍为 Legacy；可通过 feature flag 启用 Shadow 对比，或让 LangGraph 接管经过严格校验的 Pathway 追问。现有 Memory Layer 和 FileSessionManager 均继续保留。

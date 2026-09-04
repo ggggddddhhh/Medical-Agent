@@ -1,5 +1,7 @@
 # Phase 5.1 — LangGraph.js Orchestrator Prototype
 
+> 历史阶段说明：Phase 5.2 已将固定版本依赖提升到根项目，并在 feature flag 下接入 Response Layer 前的 Planner 编排。Phase 5.1 原型目录仍保留用于回归对照。
+
 ## 1. 状态与目标
 
 Phase 5.1 的状态是 `SHADOW_PROTOTYPE_ONLY`。本阶段引入隔离的 LangGraph.js StateGraph 原型，用于验证统一状态、节点编排、thread checkpoint 和重复追问对比；生产 Demo 仍由现有 `MemoryLayerAgent` 返回结果。

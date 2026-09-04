@@ -5,6 +5,11 @@
   "type": "module",
   "license": "Apache-2.0",
   "description": "A verifiable medical safety agent MVP for disposition and care preparation.",
+  "dependencies": {
+    "@langchain/core": "1.2.9",
+    "@langchain/langgraph": "1.4.13",
+    "zod": "4.5.4"
+  },
   "scripts": {
     "test": "node --test \"test/**/*.test.js\"",
     "test:coverage": "node --test --experimental-test-coverage \"test/**/*.test.js\"",

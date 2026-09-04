@@ -16,7 +16,7 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 - 头痛（HEADACHE_V1）
 - 胸痛（CHEST_PAIN_V1）
 
-比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo，Phase 5 已增加本地会话检查点、Fact Memory 与问题去重。该状态不代表临床验证或真实世界部署许可。
+比赛工程状态：Phase 2A 已完成语义稳健性验证，Phase 2B/2C 已打通多轮 Agent 与安全响应层，Phase 3 已接入 LightRAG + BAAI/bge-m3，Phase 4 已提供 React Demo，Phase 5 已增加本地会话检查点与 Fact Memory，Phase 5.2 提供可回退的 LangGraph.js Planner 渐进迁移。该状态不代表临床验证或真实世界部署许可。
 
 项目适合用于医疗安全智能体架构研究、语义 Gate 评测、比赛演示和失效安全设计验证；不适合直接处理真实患者数据，也不能作为临床诊断或急救决策系统部署。
 
@@ -27,6 +27,7 @@ Medical-Agent 回答的是“下一步应该采取什么行动”，而不是“
 - Semantic Gate：对 ACCEPT / UNCERTAIN / REJECT 进行保守裁决
 - Multi-turn Agent Loop：追问后更新同一份 CaseState 并重新评估安全
 - Memory Layer：持久化 sessionId、历史消息与 CaseState 快照，支持安全恢复
+- LangGraph.js Planner Orchestrator：以 legacy / shadow / langgraph 三态渐进接管 Fact Memory、问题规划和 pending 状态
 - Question Planner：根据 Fact Memory 过滤已回答字段，避免重复追问
 - Safety Core：危险信号优先、风险单调、工具失败安全降级
 - Response Layer：把内部决策转换为受约束的用户回复
@@ -46,7 +47,8 @@ flowchart LR
     S --> G[Semantic Gate]
     G --> C[CaseState + Safety Core]
     C --> P[Clinical Pathway]
-    P --> R[Response Layer]
+    P --> L[LangGraph Planner / 可回退]
+    L --> R[Response Layer]
     R --> U
     S -. HTTP .-> AI[Python AI Service]
     R -. 仅知识支持 .-> K[Python LightRAG Service]
@@ -70,6 +72,7 @@ Node.js 是临床决策权威；Memory 与 Python 服务均不能修改 riskLeve
 git clone <your-repository-url>
 cd Medical-Agent
 
+npm ci
 npm ci --prefix web
 
 py -3.12 -m venv .venv
@@ -92,6 +95,8 @@ Copy-Item web/.env.example web/.env
 - EMBEDDING_BASE_URL
 - EMBEDDING_API_KEY
 - EMBEDDING_MODEL=BAAI/bge-m3
+
+`AGENT_ORCHESTRATOR` 默认为 `legacy`。可使用 `shadow` 只做 Planner 对比，或使用 `langgraph` 让 LangGraph 接管经过批准的 Pathway 追问；任一编排异常都会回退 Legacy 结果。
 
 启动脚本会自动读取根目录 .env；Vite 会自动读取 web/.env。两个真实文件均已被 Git 忽略。
 
@@ -167,9 +172,10 @@ npm run test:rag:live
 
 当前验证基线：
 
-- Node.js：287/287
+- Node.js：312/312
 - Python：19/19
-- React/Vitest：6/6
+- LangGraph Phase 5.1 prototype：6/6
+- React/Vitest：8/8
 - Phase 1 Safety Invariants：10/10
 - Node.js 行覆盖率：93.57%
 

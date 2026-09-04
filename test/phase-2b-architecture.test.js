@@ -13,11 +13,17 @@ test("Phase 2B keeps the validated Node core byte-for-byte unchanged", () => {
   }
 });
 
-test("Phase 2B adds no pathway, RAG framework or Node runtime dependency", () => {
+test("Phase 2B owns no pathway or LangGraph runtime integration", () => {
   assert.equal(Object.keys(protocols).length, 2);
-  const packageJson = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
-  assert.deepEqual(packageJson.dependencies ?? {}, {});
-  assert.doesNotMatch(JSON.stringify(packageJson), /langchain|pathway/i);
+  const source = [
+    "create-phase2b-agent.js",
+    "multi-turn-agent-loop.js",
+    "core-session-bridge.js",
+  ].map((file) => readFileSync(
+    new URL(`../src/phase2b/${file}`, import.meta.url),
+    "utf8",
+  )).join("\n");
+  assert.doesNotMatch(source, /@langchain|StateGraph|MemorySaver/);
 });
 
 test("Phase 2B document defines architecture, boundaries, APIs and real clarification flow", () => {
