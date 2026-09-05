@@ -3,6 +3,7 @@
 > **安全约束多轮医疗 Agent｜Safety-Constrained Multi-turn Medical AI Agent**
 
 [![Release](https://img.shields.io/github/v/release/ggggddddhhh/Medical-Agent?include_prereleases&label=release)](https://github.com/ggggddddhhh/Medical-Agent/releases)
+[![CI](https://github.com/ggggddddhhh/Medical-Agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ggggddddhhh/Medical-Agent/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Research Prototype](https://img.shields.io/badge/status-research%20prototype-orange.svg)](#限制与适用边界)
 
